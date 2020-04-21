@@ -1,4 +1,4 @@
-# chess_comparison
+# Chess Algorithm Comparison (Minimax VS MCTS)
 
 This is my Chess project for my stage 3 dissertation at Newcastle University
 
