@@ -72,7 +72,6 @@ public:
 			return children.size() == 0;
 		}
 		bool isTerminal() {
-			//max depth
 			//check mate
 			if (data.isCheckMate())
 				return true;
