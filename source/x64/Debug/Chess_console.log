@@ -1,2 +1,8 @@
 ﻿  chess.cpp
-  Chess_console.vcxproj -> C:\Users\Nick\Source\Repos\chess_comparison\source\x64\Debug\Chess_console.exe
+  main.cpp
+C:\Users\Nick\source\repos\chess_algorithms\source\algorithms.h(145,20): warning C4244: 'return': conversion from 'int' to 'const float', possible loss of data
+C:\Users\Nick\source\repos\chess_algorithms\source\algorithms.h(150,21): warning C4244: 'return': conversion from 'int' to 'const float', possible loss of data
+C:\Users\Nick\source\repos\chess_algorithms\source\algorithms.h(156,47): warning C4244: 'return': conversion from 'int' to 'const float', possible loss of data
+C:\Users\Nick\source\repos\chess_algorithms\source\algorithms.h(175,21): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+  Chess_console.vcxproj -> C:\Users\Nick\source\repos\chess_algorithms\source\x64\Debug\Chess_console.exe

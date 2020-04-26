@@ -160,6 +160,8 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 				movePiece(validMoves[rand() % validMoves.size()]);
 		}
 		//backpropagation - back propagate result up the tree
+		if (result != 0)
+			cout << result << "\n";
 		if (!leaf->backpropagate(result, white))
 			cout << "***BACKPROPAGATE ERROR***" << "\n";
 		//reset to original state

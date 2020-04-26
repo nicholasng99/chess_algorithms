@@ -188,10 +188,11 @@ public:
 
 	int fiftyMovesTracker;
 	//can the fifty move rule be applied
-	bool fiftyMoveRule() const;
 
 	void setStaleMate();
 	bool stalemate = false;
+
+	bool fiftyMoveRule();
 private:
 
 	// Represent the pieces in the board

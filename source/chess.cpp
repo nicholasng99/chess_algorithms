@@ -584,7 +584,38 @@ char Game::getPiece_considerMove(int iRow, int iColumn, IntendedMove* intended_m
 Chess::UnderAttack Game::isUnderAttack(int iRow, int iColumn, int iColor, IntendedMove* pintended_move)
 {
 	UnderAttack attack = { 0 };
+	//if underattack from another king
+	{
+		bool found = false;
+		for (int i = -1; i <= 1; i++) {
+			if (found)
+				break;
+			if (iRow + i < 0 || iRow + i>7)
+				continue;
+			for (int j = -1; j <= 1; j++) {
+				if (iColumn + j < 0 || iColumn + j>7)
+					continue;
+				char chPieceFound = getPiece_considerMove(iRow + i, iColumn + j, pintended_move);
+				if (EMPTY_SQUARE == chPieceFound || iColor == getPieceColor(chPieceFound))
+					continue;
+				if (toupper(chPieceFound) == 'K') {
+					attack.bUnderAttack = true;
+					attack.iNumAttackers += 1;
 
+					attack.attacker[attack.iNumAttackers - 1].pos.iRow = iRow + i;
+					attack.attacker[attack.iNumAttackers - 1].pos.iColumn = iColumn + j;
+					Direction d = DIAGONAL;
+					if (iRow == iRow + i)
+						d = HORIZONTAL;
+					else if (iColumn == iColumn + j)
+						d = VERTICAL;
+					attack.attacker[attack.iNumAttackers - 1].dir = d;
+					found = true;
+					break;
+				}
+			}
+		}
+	}
 	// a) Direction: HORIZONTAL
 	{
 		// Check all the way to the right
@@ -2140,13 +2171,17 @@ int Game::pieceValue(int row, int col) const
 	return value;
 }
 
-bool Game::fiftyMoveRule() const
-{
-	return fiftyMovesTracker >= 50;
-}
-
 void Game::setStaleMate()
 {
 	stalemate = true;
 	m_bGameFinished = true;
+}
+
+bool Game::fiftyMoveRule()
+{
+	if (fiftyMovesTracker >= 50) {
+		setStaleMate();
+		return true;
+	}
+	return false;
 }

@@ -1330,15 +1330,17 @@ bool movePiece(Algorithms::Move move)
 		}
 	}
 
-	/*printLogo();
+	printLogo();
 	printSituation(*current_game);
-	printBoard(*current_game);*/
+	printBoard(*current_game);
 	return true;
 }
 
 //all valid moves for player
 vector<Algorithms::Move> allValidMoves(Chess::Player player) {
 	vector<Algorithms::Move> validMoves;
+	if (current_game->isFinished())
+		return validMoves;
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			Chess::Position present{ i, j };
