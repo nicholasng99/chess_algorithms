@@ -33,7 +33,7 @@ public:
 		//node constructor
 		Node(Game& game, vector<Move>(*eachMove)(Chess::Player), Node* parent = nullptr) {
 			data = game;
-			validMoves = eachMove(static_cast<Chess::Player>(data.getCurrentTurn()));
+			validMoves = eachMove(game.getCurrentTurn() == 0 ? Chess::WHITE_PLAYER : Chess::BLACK_PLAYER);
 			if (parent == nullptr)
 				depth = 0;
 			else {

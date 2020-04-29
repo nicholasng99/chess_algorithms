@@ -586,14 +586,11 @@ Chess::UnderAttack Game::isUnderAttack(int iRow, int iColumn, int iColor, Intend
 	UnderAttack attack = { 0 };
 	//if underattack from another king
 	{
-		bool found = false;
 		for (int i = -1; i <= 1; i++) {
-			if (found)
-				break;
 			if (iRow + i < 0 || iRow + i>7)
 				continue;
 			for (int j = -1; j <= 1; j++) {
-				if (iColumn + j < 0 || iColumn + j>7)
+				if (iColumn + j < 0 || iColumn + j>7 || (i == 0 && j == 0))
 					continue;
 				char chPieceFound = getPiece_considerMove(iRow + i, iColumn + j, pintended_move);
 				if (EMPTY_SQUARE == chPieceFound || iColor == getPieceColor(chPieceFound))
@@ -610,7 +607,6 @@ Chess::UnderAttack Game::isUnderAttack(int iRow, int iColumn, int iColor, Intend
 					else if (iColumn == iColumn + j)
 						d = VERTICAL;
 					attack.attacker[attack.iNumAttackers - 1].dir = d;
-					found = true;
 					break;
 				}
 			}
@@ -809,7 +805,7 @@ Chess::UnderAttack Game::isUnderAttack(int iRow, int iColumn, int iColor, Intend
 		}
 
 		// Check the diagonal up-left
-		for (int i = iRow + 1, j = iColumn - 1; i < 8 && j > 0; i++, j--)
+		for (int i = iRow + 1, j = iColumn - 1; i < 8 && j >= 0; i++, j--)
 		{
 			char chPieceFound = getPiece_considerMove(i, j, pintended_move);
 			if (EMPTY_SQUARE == chPieceFound)
@@ -857,7 +853,7 @@ Chess::UnderAttack Game::isUnderAttack(int iRow, int iColumn, int iColor, Intend
 		}
 
 		// Check the diagonal down-right
-		for (int i = iRow - 1, j = iColumn + 1; i > 0 && j < 8; i--, j++)
+		for (int i = iRow - 1, j = iColumn + 1; i >= 0 && j < 8; i--, j++)
 		{
 			char chPieceFound = getPiece_considerMove(i, j, pintended_move);
 			if (EMPTY_SQUARE == chPieceFound)
@@ -905,7 +901,7 @@ Chess::UnderAttack Game::isUnderAttack(int iRow, int iColumn, int iColor, Intend
 		}
 
 		// Check the diagonal down-left
-		for (int i = iRow - 1, j = iColumn - 1; i > 0 && j > 0; i--, j--)
+		for (int i = iRow - 1, j = iColumn - 1; i >= 0 && j >= 0; i--, j--)
 		{
 			char chPieceFound = getPiece_considerMove(i, j, pintended_move);
 			if (EMPTY_SQUARE == chPieceFound)

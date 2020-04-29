@@ -1330,9 +1330,9 @@ bool movePiece(Algorithms::Move move)
 		}
 	}
 
-	printLogo();
+	/*printLogo();
 	printSituation(*current_game);
-	printBoard(*current_game);
+	printBoard(*current_game);*/
 	return true;
 }
 
@@ -1358,6 +1358,13 @@ vector<Algorithms::Move> allValidMoves(Chess::Player player) {
 							Chess::Promotion  S_promotion = { 0 };
 							if (true == isMoveValidNP(present, future, &S_enPassant, &S_castling, &S_promotion)) {
 								//log a valid move
+								if (toupper(chTarget) == 'K') {//delete this after testing
+									printLogo();
+									printSituation(*current_game);
+									printBoard(*current_game);
+									int t = current_game->getCurrentTurn();
+									bool debug = isMoveValidNP(present, future, &S_enPassant, &S_castling, &S_promotion);
+								}
 								validMoves.push_back(Algorithms::Move{ present, future, S_enPassant, S_castling, S_promotion });
 							}
 						}
@@ -1487,7 +1494,7 @@ int main()
 						int value;
 						Algorithms algo(current_game, allValidMoves, movePiece);
 						if (minimax)
-							 value = algo.minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+							value = algo.minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 						else
 							algo.monteCarloTreeSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 						algo.doBestMove();

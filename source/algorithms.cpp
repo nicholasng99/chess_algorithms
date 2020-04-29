@@ -116,7 +116,7 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 	if (MCTree == nullptr)
 		MCTree = new Node(*current_game, eachMove);
 	//for x times build the tree
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		//selection - select best child to explore including all valid moves
 		//should prioritize promosing moves or unexplroed moves to balance
@@ -124,14 +124,14 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 		//check if node is already terminal
 		if (leaf->isTerminal())
 			return false;
-		if (i > 900)
+		if (i == 99)
 			i = i;
 		//if leaf has already explored all moves, pick the best result
 		while (!leaf->hasPossibleChildren() && leaf->children.size() > 0) {
 			leaf = leaf->bestUCTChild();
 		}
 		// expand if the leaf is not terminal
-		if (!leaf->isTerminal()) {
+		if (!leaf->isTerminal() && leaf->hasPossibleChildren()) {
 			//expansion - add new child node to selected child
 			Move randomMove = leaf->popRandomValidMove();
 			movePiece(randomMove);
@@ -139,7 +139,7 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 		}
 		//simulation - expand the child node randomly till finished
 		int result = -2;
-		bool playerIsWhite = white;
+		bool playerIsWhite = leaf->data.getCurrentTurn() == 0 ? true : false;
 		while (result == -2) {
 			//end cases to stop simulation
 			if (current_game->isCheckMate()) {
@@ -148,20 +148,22 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 				else
 					result = 1;
 			}
-			vector<Move> validMoves = eachMove(player(playerIsWhite));
-			playerIsWhite = !playerIsWhite;
-			if (validMoves.size() == 0 || current_game->fiftyMoveRule()) {
-				//no more moves and not a checkmate or fifty move rule causes stalemate
-				current_game->setStaleMate();
-				result = 0;
+			else {
+				vector<Move> validMoves = eachMove(player(playerIsWhite));
+				playerIsWhite = !playerIsWhite;
+				if (validMoves.size() == 0 || current_game->fiftyMoveRule()) {
+					//no more moves and not a checkmate or fifty move rule causes stalemate
+					current_game->setStaleMate();
+					result = 0;
+				}
+				//do rollout policy
+				if (result == -2)
+					movePiece(validMoves[rand() % validMoves.size()]);
 			}
-			//do rollout policy
-			if (result == -2)
-				movePiece(validMoves[rand() % validMoves.size()]);
 		}
 		//backpropagation - back propagate result up the tree
-		if (result != 0)
-			cout << result << "\n";
+		/*if (result != 0)
+			cout << result << "\n";*/
 		if (!leaf->backpropagate(result, white))
 			cout << "***BACKPROPAGATE ERROR***" << "\n";
 		//reset to original state
