@@ -293,6 +293,15 @@ Game& Game::operator=(const Game& g)
 	return *this;
 }
 
+bool Game::operator==(const Game& g)
+{
+	for (int i = 0; i < 8;i++) {
+		if (memcmp((void*)board[i], (void*)g.board[i], 8 * sizeof(char)) != 0)
+			return false;
+	}
+	return true;
+}
+
 void Game::movePiece(Position present, Position future, Chess::EnPassant* S_enPassant, Chess::Castling* S_castling, Chess::Promotion* S_promotion)
 {
 	fiftyMovesTracker++;

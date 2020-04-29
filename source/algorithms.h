@@ -31,15 +31,15 @@ public:
 		int gamesLost;//to calculate games drawn
 		//functions
 		//node constructor
-		Node(Game& game, vector<Move>(*eachMove)(Chess::Player), Node* parent = nullptr) {
+		Node(Game& game, vector<Move>(*eachMove)(Chess::Player)) {
 			data = game;
 			validMoves = eachMove(game.getCurrentTurn() == 0 ? Chess::WHITE_PLAYER : Chess::BLACK_PLAYER);
 			if (parent == nullptr)
 				depth = 0;
-			else {
+			/*else {
 				this->parent = parent;
 				depth = parent->depth + 1;
-			}
+			}*/
 			visitCount = 0;
 			gamesWon = 0;
 			gamesLost = 0;
@@ -65,6 +65,8 @@ public:
 		}
 
 		Node* addChild(Node* node) {
+			node->parent = this;
+			node->depth = this->depth + 1;
 			children.push_back(node);
 			return children[children.size() - 1];
 		}
@@ -142,18 +144,18 @@ public:
 		const float winRate() const {
 			if (visitCount == 0)
 				return 0.0f;
-			return gamesWon / visitCount;
+			return (float)gamesWon / (float)visitCount;
 		}
 		const float loseRate() const {
 			if (visitCount == 0)
 				return 0.0f;
-			return gamesLost / visitCount;
+			return (float)gamesLost / (float)visitCount;
 		}
 
 		const float drawRate() const {
 			if (visitCount == 0)
 				return 0.0f;
-			return (visitCount - gamesWon - gamesLost) / visitCount;
+			return (float)(visitCount - gamesWon - gamesLost) / (float)visitCount;
 		}
 
 		//returns the best winrate child node, nullptr if no child
@@ -172,7 +174,7 @@ public:
 			if (depth == 0)
 				return 0.0f;
 			//ucb1 formula
-			return winRate() + sqrt(2) * sqrt(log(parent->visitCount) / visitCount);
+			return winRate() + (float)sqrt(2) * (float)sqrt(log((float)parent->visitCount) / (float)visitCount);
 		}
 
 		// returns best UCT  node of all explored leaf nodes, nullptr if no child

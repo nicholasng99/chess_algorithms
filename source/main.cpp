@@ -1358,11 +1358,10 @@ vector<Algorithms::Move> allValidMoves(Chess::Player player) {
 							Chess::Promotion  S_promotion = { 0 };
 							if (true == isMoveValidNP(present, future, &S_enPassant, &S_castling, &S_promotion)) {
 								//log a valid move
-								if (toupper(chTarget) == 'K') {//delete this after testing
+								if (toupper(chTarget) == 'K') {//should not occur
 									printLogo();
 									printSituation(*current_game);
 									printBoard(*current_game);
-									int t = current_game->getCurrentTurn();
 									bool debug = isMoveValidNP(present, future, &S_enPassant, &S_castling, &S_promotion);
 								}
 								validMoves.push_back(Algorithms::Move{ present, future, S_enPassant, S_castling, S_promotion });
@@ -1380,6 +1379,7 @@ vector<Algorithms::Move> allValidMoves(Chess::Player player) {
 int main()
 {
 	bool bRun = true;
+	Algorithms* algo = nullptr;
 
 	// Clear screen an print the logo
 	clearScreen();
@@ -1415,6 +1415,7 @@ int main()
 				} while (!(!input.empty() && std::find_if(input.begin(), input.end(), [](unsigned char c) {
 					return !std::isdigit(c); }) == input.end()));
 				newEndGame(stoi(input));
+				algo = new Algorithms(current_game, allValidMoves, movePiece);
 				clearScreen();
 				printLogo();
 				printSituation(*current_game);
@@ -1478,8 +1479,50 @@ int main()
 			}
 			break;
 
-			case 'R':
+			case 'R'://minimax as whitte
 			case 'r':
+			{
+				if (NULL != current_game)
+				{
+					if (current_game->isFinished())
+					{
+						cout << "This game has already finished!\n";
+					}
+					else
+					{
+						//clearScreen();
+						bool minimax = true;
+						int value;
+						while (!current_game->isFinished()){
+							if (minimax)
+								value = algo->minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+							else
+								algo->monteCarloTreeSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+							algo->doBestMove();
+							printLogo();
+							printSituation(*current_game);
+							printBoard(*current_game);
+							//do something
+							if (minimax)
+								cout << "Minimax Value: " << value << "\n";
+							minimax = !minimax;
+						}
+						//vector<Algorithms::Move> moves = allValidMoves(current_game->getCurrentTurn() == 0 ? Chess::WHITE_PLAYER : Chess::BLACK_PLAYER);
+						//for (const auto& i : moves)
+						//	cout << '(' << char('A' + i.present.iColumn) << i.present.iRow+1
+						//	<< '-' << char('A' + i.future.iColumn) << i.future.iRow+1 << ')';
+					}
+				}
+				else
+				{
+					cout << "No game running!\n";
+				}
+
+			}
+			break;
+
+			case 'T'://mcts as whitte
+			case 't':
 			{
 				if (NULL != current_game)
 				{
@@ -1492,19 +1535,20 @@ int main()
 						//clearScreen();
 						bool minimax = false;
 						int value;
-						Algorithms algo(current_game, allValidMoves, movePiece);
-						if (minimax)
-							value = algo.minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
-						else
-							algo.monteCarloTreeSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
-						algo.doBestMove();
-						printLogo();
-						printSituation(*current_game);
-						printBoard(*current_game);
-						//do something
-						if (minimax)
-							cout << "Minimax Value: " << value << "\n";
-
+						while (!current_game->isFinished()) {
+							if (minimax)
+								value = algo->minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+							else
+								algo->monteCarloTreeSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+							algo->doBestMove();
+							printLogo();
+							printSituation(*current_game);
+							printBoard(*current_game);
+							//do something
+							if (minimax)
+								cout << "Minimax Value: " << value << "\n";
+							minimax = !minimax;
+						}
 						//vector<Algorithms::Move> moves = allValidMoves(current_game->getCurrentTurn() == 0 ? Chess::WHITE_PLAYER : Chess::BLACK_PLAYER);
 						//for (const auto& i : moves)
 						//	cout << '(' << char('A' + i.present.iColumn) << i.present.iRow+1

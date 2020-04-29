@@ -2,6 +2,7 @@
 
 Algorithms::Algorithms(Game* current_game, vector<Move>(*eachMove)(Chess::Player), bool (*movePiece)(Move))
 {
+	srand((unsigned)time(NULL));
 	saves = new stack<Game>;
 	this->current_game = current_game;
 	game_copy = *current_game;
@@ -111,10 +112,18 @@ int Algorithms::minimaxSearch(bool maximizer, int depth, int alpha, int beta)
 bool Algorithms::monteCarloTreeSearch(bool white)
 {
 	save();
-	srand((unsigned)time(NULL));
 	//initialize tree if doesnt exists
-	if (MCTree == nullptr)
+	//if (MCTree == nullptr)
 		MCTree = new Node(*current_game, eachMove);
+	/*else if (bestMove.present.iRow != bestMove.future.iRow ||
+		bestMove.present.iColumn != bestMove.future.iColumn) {
+		for (auto& child : (MCTree->bestChild())->children) {
+			if (*current_game == child->data) {
+				MCTree = child;
+				MCTree->setRoot();
+			}
+		}
+	}*/
 	//for x times build the tree
 	for (int i = 0; i < 100; i++)
 	{
@@ -124,8 +133,6 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 		//check if node is already terminal
 		if (leaf->isTerminal())
 			return false;
-		if (i == 99)
-			i = i;
 		//if leaf has already explored all moves, pick the best result
 		while (!leaf->hasPossibleChildren() && leaf->children.size() > 0) {
 			leaf = leaf->bestUCTChild();
@@ -135,7 +142,7 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 			//expansion - add new child node to selected child
 			Move randomMove = leaf->popRandomValidMove();
 			movePiece(randomMove);
-			leaf = leaf->addChild(new Node(*current_game, eachMove, leaf));
+			leaf = leaf->addChild(new Node(*current_game, eachMove));
 		}
 		//simulation - expand the child node randomly till finished
 		int result = -2;

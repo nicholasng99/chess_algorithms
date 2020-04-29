@@ -112,6 +112,8 @@ public:
 
 	Game& operator=(const Game& g);//assignment operator
 
+	bool operator==(const Game& g);
+
 	void movePiece(Position present, Position future, Chess::EnPassant* S_enPassant, Chess::Castling* S_castling, Chess::Promotion* S_promotion);
 
 	void undoLastMove();
@@ -186,7 +188,7 @@ public:
 	int pieceValue(int row, int col) const;
 	//round tracker for fifty move rule
 
-	int fiftyMovesTracker;
+	int fiftyMovesTracker = 0;
 	//can the fifty move rule be applied
 
 	void setStaleMate();
