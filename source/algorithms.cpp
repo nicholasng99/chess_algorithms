@@ -114,7 +114,7 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 	save();
 	//initialize tree if doesnt exists
 	//if (MCTree == nullptr)
-		MCTree = new Node(*current_game, eachMove);
+	MCTree = new Node(*current_game, eachMove);
 	/*else if (bestMove.present.iRow != bestMove.future.iRow ||
 		bestMove.present.iColumn != bestMove.future.iColumn) {
 		for (auto& child : (MCTree->bestChild())->children) {
@@ -131,11 +131,13 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 		//should prioritize promosing moves or unexplroed moves to balance
 		Node* leaf = MCTree;
 		//check if node is already terminal
-		if (leaf->isTerminal())
+		if (leaf->isTerminal()) {
 			return false;
+		}
 		//if leaf has already explored all moves, pick the best result
 		while (!leaf->hasPossibleChildren() && leaf->children.size() > 0) {
 			leaf = leaf->bestUCTChild();
+			*current_game = leaf->data;
 		}
 		// expand if the leaf is not terminal
 		if (!leaf->isTerminal() && leaf->hasPossibleChildren()) {
@@ -143,6 +145,7 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 			Move randomMove = leaf->popRandomValidMove();
 			movePiece(randomMove);
 			leaf = leaf->addChild(new Node(*current_game, eachMove));
+			*current_game = leaf->data;
 		}
 		//simulation - expand the child node randomly till finished
 		int result = -2;
