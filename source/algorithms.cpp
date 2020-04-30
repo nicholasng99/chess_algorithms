@@ -124,12 +124,18 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 		}
 		else {
 			//get the child representing the opponent's move
+			bool found = false;
 			for (auto& child : (MCTree->bestChild())->children) {
 				if (*current_game == child->data) {
 					MCTree = child;
 					MCTree->setRoot();
+					found = true;
 					break;
 				}
+			}
+			if (!found) {
+				delete MCTree;//the child does not exist it is safe to delete the whole tree
+				MCTree = new Node(*current_game, eachMove);
 			}
 		}
 	}

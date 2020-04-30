@@ -1415,6 +1415,7 @@ int main()
 				} while (!(!input.empty() && std::find_if(input.begin(), input.end(), [](unsigned char c) {
 					return !std::isdigit(c); }) == input.end()));
 				newEndGame(stoi(input));
+				delete algo;
 				algo = new Algorithms(current_game, allValidMoves, movePiece);
 				clearScreen();
 				printLogo();
@@ -1547,12 +1548,8 @@ int main()
 							//do something
 							if (minimax)
 								cout << "Minimax Value: " << value << "\n";
-							minimax = !minimax;
+							//minimax = !minimax;
 						}
-						//vector<Algorithms::Move> moves = allValidMoves(current_game->getCurrentTurn() == 0 ? Chess::WHITE_PLAYER : Chess::BLACK_PLAYER);
-						//for (const auto& i : moves)
-						//	cout << '(' << char('A' + i.present.iColumn) << i.present.iRow+1
-						//	<< '-' << char('A' + i.future.iColumn) << i.future.iRow+1 << ')';
 					}
 				}
 				else
