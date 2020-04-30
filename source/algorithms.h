@@ -164,7 +164,8 @@ public:
 				return nullptr;
 			Node* best = children[0];
 			for (auto& child : children) {
-				if (child->winRate() > best->winRate())
+				//incorporates draw rate into consideration to avoid selecting lossing moves
+				if (child->winRate() + child->drawRate() > best->winRate() + best->drawRate())
 					best = child;
 			}
 			return best;

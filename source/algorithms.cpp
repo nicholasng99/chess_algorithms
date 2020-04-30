@@ -113,25 +113,35 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 {
 	save();
 	//initialize tree if doesnt exists
-	//if (MCTree == nullptr)
-	MCTree = new Node(*current_game, eachMove);
-	/*else if (bestMove.present.iRow != bestMove.future.iRow ||
-		bestMove.present.iColumn != bestMove.future.iColumn) {
-		for (auto& child : (MCTree->bestChild())->children) {
-			if (*current_game == child->data) {
-				MCTree = child;
-				MCTree->setRoot();
+	if (MCTree == nullptr)//first call
+		MCTree = new Node(*current_game, eachMove);
+	else {
+		//second call and after
+		//check if last call was mcts implying mcts vs mcts
+		if (*current_game == MCTree->bestChild()->data) {
+			MCTree = MCTree->bestChild();
+			MCTree->setRoot();
+		}
+		else {
+			//get the child representing the opponent's move
+			for (auto& child : (MCTree->bestChild())->children) {
+				if (*current_game == child->data) {
+					MCTree = child;
+					MCTree->setRoot();
+					break;
+				}
 			}
 		}
-	}*/
+	}
 	//for x times build the tree
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 300; i++)
 	{
 		//selection - select best child to explore including all valid moves
 		//should prioritize promosing moves or unexplroed moves to balance
 		Node* leaf = MCTree;
 		//check if node is already terminal
 		if (leaf->isTerminal()) {
+			//mcts must be called where root node has children to choose from
 			return false;
 		}
 		//if leaf has already explored all moves, pick the best result
