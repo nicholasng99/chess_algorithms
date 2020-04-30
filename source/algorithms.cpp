@@ -109,13 +109,13 @@ int Algorithms::minimaxSearch(bool maximizer, int depth, int alpha, int beta)
 	}
 }
 
-bool Algorithms::monteCarloTreeSearch(bool white)
+bool Algorithms::monteCarloTreeSearch(int seconds)
 {
 	save();
 	//initialize tree if doesnt exists
 	if (MCTree == nullptr)//first call
 		MCTree = new Node(*current_game, eachMove);
-	else {
+	else {//set child node to root if exists else make new tree root
 		//second call and after
 		//check if last call was mcts implying mcts vs mcts
 		if (*current_game == MCTree->bestChild()->data) {
@@ -139,9 +139,16 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 			}
 		}
 	}
+	//the player that the algo optimizes for
+	bool white = MCTree->data.getCurrentTurn() == Chess::WHITE_PLAYER;
 	//for x times build the tree
-	for (int i = 0; i < 300; i++)
+	auto start = std::chrono::high_resolution_clock::now();
+	while (true)
 	{
+		auto end = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double, std::milli> elapsed = end - start;
+		if (elapsed.count() >= seconds * 1000.0)//milliseconds
+			break;
 		//selection - select best child to explore including all valid moves
 		//should prioritize promosing moves or unexplroed moves to balance
 		Node* leaf = MCTree;
@@ -152,7 +159,7 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 		}
 		//if leaf has already explored all moves, pick the best result
 		while (!leaf->hasPossibleChildren() && leaf->children.size() > 0) {
-			leaf = leaf->bestUCTChild();
+			leaf = leaf->bestUCTChild(white);
 			*current_game = leaf->data;
 		}
 		// expand if the leaf is not terminal
@@ -170,9 +177,9 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 			//end cases to stop simulation
 			if (current_game->isCheckMate()) {
 				if (current_game->getCurrentTurn() == 0)
-					result = -1;
+					result = -1;//black wins
 				else
-					result = 1;
+					result = 1;//white wins
 			}
 			else {
 				vector<Move> validMoves = eachMove(player(playerIsWhite));
@@ -190,7 +197,7 @@ bool Algorithms::monteCarloTreeSearch(bool white)
 		//backpropagation - back propagate result up the tree
 		/*if (result != 0)
 			cout << result << "\n";*/
-		if (!leaf->backpropagate(result, white))
+		if (!leaf->backpropagate(result))
 			cout << "***BACKPROPAGATE ERROR***" << "\n";
 		//reset to original state
 		load();

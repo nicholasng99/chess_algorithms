@@ -1498,7 +1498,7 @@ int main()
 							if (minimax)
 								value = algo->minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
-								algo->monteCarloTreeSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+								algo->monteCarloTreeSearch();
 							algo->doBestMove();
 							printLogo();
 							printSituation(*current_game);
@@ -1540,7 +1540,7 @@ int main()
 							if (minimax)
 								value = algo->minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
-								algo->monteCarloTreeSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+								algo->monteCarloTreeSearch();
 							algo->doBestMove();
 							printLogo();
 							printSituation(*current_game);

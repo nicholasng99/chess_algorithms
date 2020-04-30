@@ -27,8 +27,8 @@ public:
 		Game data;
 		//stats
 		int visitCount;
-		int gamesWon;
-		int gamesLost;//to calculate games drawn
+		int whiteWins;
+		int blackWins;//to calculate games drawn
 		//functions
 		//node constructor
 		Node(Game& game, vector<Move>(*eachMove)(Chess::Player)) {
@@ -41,8 +41,8 @@ public:
 				depth = parent->depth + 1;
 			}*/
 			visitCount = 0;
-			gamesWon = 0;
-			gamesLost = 0;
+			whiteWins = 0;
+			blackWins = 0;
 		}
 		~Node() {
 			parent = nullptr;
@@ -59,8 +59,8 @@ public:
 			data = n.data;
 			validMoves = n.validMoves;
 			visitCount = n.visitCount;
-			gamesWon = n.gamesWon;
-			gamesLost = n.gamesLost;
+			whiteWins = n.whiteWins;
+			blackWins = n.blackWins;
 			return *this;
 		}
 
@@ -126,36 +126,42 @@ public:
 			Chess::Position pos{ -1,-1 };
 			return Move{ pos,pos };
 		}
-		//recursive backpropagation in terms of white=true
-		bool backpropagate(int result, bool white = true) {
+		//recursive backpropagation
+		bool backpropagate(int result) {
 			if (result < -1 || result > 1)
 				return false;
 			visitCount++;
-			if (!white)
-				result *= -1;
-			gamesWon += result < 0 ? 0 : result;
-			gamesLost -= result > 0 ? 0 : result;
+			if (result == 1)
+				whiteWins++;
+			else if (result == -1)
+				blackWins++;
+
 			if (depth != 0)
 				return parent->backpropagate(result);
 			else
 				return true;
 		}
-
-		const float winRate() const {
+		//whtie win rate
+		const float whiteWR() const {
 			if (visitCount == 0)
 				return 0.0f;
-			return (float)gamesWon / (float)visitCount;
+			return (float)whiteWins / (float)visitCount;
 		}
-		const float loseRate() const {
+		//black win rate
+		const float blackWR() const {
 			if (visitCount == 0)
 				return 0.0f;
-			return (float)gamesLost / (float)visitCount;
+			return (float)blackWins / (float)visitCount;
 		}
 
 		const float drawRate() const {
 			if (visitCount == 0)
 				return 0.0f;
-			return (float)(visitCount - gamesWon - gamesLost) / (float)visitCount;
+			return (float)(visitCount - whiteWins - blackWins) / (float)visitCount;
+		}
+
+		const float winRate(bool white) const {
+			return white ? whiteWR() : blackWR();
 		}
 
 		//returns the best winrate child node, nullptr if no child
@@ -163,28 +169,31 @@ public:
 			if (children.size() == 0)
 				return nullptr;
 			Node* best = children[0];
+			bool white = data.getCurrentTurn() == Chess::WHITE_PLAYER;
 			for (auto& child : children) {
 				//incorporates draw rate into consideration to avoid selecting lossing moves
-				if (child->winRate() + child->drawRate() > best->winRate() + best->drawRate())
+				if (child->winRate(white) > best->winRate(white))
 					best = child;
 			}
 			return best;
 		}
 
-		float UCT() {
+		//returns uct value based on player
+		float UCT(bool white) {
 			if (depth == 0)
 				return 0.0f;
 			//ucb1 formula
-			return winRate() + (float)sqrt(2) * (float)sqrt(log((float)parent->visitCount) / (float)visitCount);
+			float winRate = white ? whiteWR() : blackWR();
+			return winRate + (float)sqrt(2) * (float)sqrt(log((float)parent->visitCount) / (float)visitCount);
 		}
 
-		// returns best UCT  node of all explored leaf nodes, nullptr if no child
-		Node* bestUCTChild() {
+		// returns best UCT  node of all explored leaf nodes based on player, nullptr if no child
+		Node* bestUCTChild(bool white) {
 			if (isLeaf())
 				return this;
 			Node* best = children[0];
 			for (auto& child : children) {
-				if (child->UCT() > best->UCT())
+				if (child->UCT(white) > best->UCT(white))
 					best = child;
 			}
 			return best;
@@ -228,7 +237,7 @@ public:
 	int minimaxSearch(bool maximizer, int depth = 0, int alpha = std::numeric_limits<int>::min(), int beta = std::numeric_limits<int>::max());
 
 	//returns true for success, false for terminal
-	bool monteCarloTreeSearch(bool white);
+	bool monteCarloTreeSearch(int seconds = 10);
 
 private:
 	//original game copy to backup current state
