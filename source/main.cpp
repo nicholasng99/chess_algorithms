@@ -1480,7 +1480,7 @@ int main()
 			}
 			break;
 
-			case 'R'://minimax as whitte
+			case 'R'://minimax as white
 			case 'r':
 			{
 				if (NULL != current_game)
@@ -1548,7 +1548,7 @@ int main()
 							//do something
 							if (minimax)
 								cout << "Minimax Value: " << value << "\n";
-							//minimax = !minimax;
+							minimax = !minimax;
 						}
 					}
 				}

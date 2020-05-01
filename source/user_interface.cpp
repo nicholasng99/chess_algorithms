@@ -37,7 +37,7 @@ void printLogo(void)
 
 void printMenu(void)
 {
-   cout << "Commands: (N)ew endgame \t(M)ove \t(E)valuate \t(R)un Algo \t(Q)uit \n";
+   cout << "Commands: (N)ew endgame \t(M)ove \t(E)valuate \t(R)Minimax as white \t(T)MCTS as white \t(Q)uit \n";
 }
 
 void printMessage(void)
