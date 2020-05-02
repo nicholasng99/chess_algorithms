@@ -225,7 +225,7 @@ public:
 
 	//vars for performance logging
 	//minimax
-	//float timeElapsed = 0.0f; unable to do here because of recursive nature
+	float timeElapsed = 0.0f;
 	int gamesEvalauted = 0, totalEvaluated = 0;
 	//mcts
 	int nodesCreated = 0;
@@ -248,6 +248,7 @@ public:
 	void load();
 
 	int minimaxSearch(bool maximizer, int depth = 0, int alpha = std::numeric_limits<int>::min(), int beta = std::numeric_limits<int>::max());
+	int minimaxSearchTimed(bool maximizer, int depth = 0, int alpha = std::numeric_limits<int>::min(), int beta = std::numeric_limits<int>::max());
 
 	//returns true for success, false for terminal
 	bool monteCarloTreeSearch(int seconds = 10);

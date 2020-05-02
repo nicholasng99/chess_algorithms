@@ -1496,7 +1496,7 @@ int main()
 						int value;
 						while (!current_game->isFinished()) {
 							if (minimax)
-								value = algo->minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+								value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
 								algo->monteCarloTreeSearch();
 							algo->doBestMove();
@@ -1538,7 +1538,7 @@ int main()
 						int value;
 						while (!current_game->isFinished()) {
 							if (minimax)
-								value = algo->minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+								value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
 								algo->monteCarloTreeSearch();
 							algo->doBestMove();
@@ -1580,7 +1580,7 @@ int main()
 								algo->setMaxDepth(depth1);
 							else
 								algo->setMaxDepth(depth2);
-							value = algo->minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+							value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							algo->doBestMove();
 							printLogo();
 							printSituation(*current_game);
