@@ -228,7 +228,7 @@ public:
 	float minimaxTimeElapsed = 0.0f;
 	int gamesEvalauted = 0, totalEvaluated = 0;
 	//mcts
-	int nodesCreated = 0;
+	int totalNodesCreated = 0, nodesCreated = 0;
 	int mctsEval = 0;
 	float mctsActualTime = 0.0f;
 

@@ -265,6 +265,7 @@ Game::Game(const Game& g)
 	white_captured = g.white_captured;
 	black_captured = g.black_captured;
 	fiftyMovesTracker = g.fiftyMovesTracker;
+	stalemate = g.stalemate;
 }
 
 Game::~Game()
@@ -290,6 +291,7 @@ Game& Game::operator=(const Game& g)
 	white_captured = g.white_captured;
 	black_captured = g.black_captured;
 	fiftyMovesTracker = g.fiftyMovesTracker;
+	stalemate = g.stalemate;
 	return *this;
 }
 

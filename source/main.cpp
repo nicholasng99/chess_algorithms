@@ -1376,6 +1376,29 @@ vector<Algorithms::Move> allValidMoves(Chess::Player player) {
 	return validMoves;
 }
 
+//---------------------------------------------------------------------------------------
+// Methods for results logging
+//---------------------------------------------------------------------------------------
+template <typename T>
+void record(bool minimax, string fileName, vector<T>& data) {
+	string path = "../results/";
+	if (minimax)
+		path += "minimax/";
+	else
+		path += "mcts/";
+	path += fileName;
+	path += ".csv";
+
+	std::ofstream file(path);
+	//write data with file <<
+	file << "Move," << fileName << "\n";
+	for (int i = 0; i < data.size(); i++) {
+		file << (i + 1) << "," << data[i] << "\n";
+	}
+	file.close();
+	createNextMessage("Game is logged to " + path + "\n");
+}
+
 int main()
 {
 	bool bRun = true;
@@ -1491,27 +1514,26 @@ int main()
 					}
 					else
 					{
-						//clearScreen();
+						//loggin vars
+						vector<int> eValues;
+						//algo vars
 						bool minimax = true;
 						int value;
 						while (!current_game->isFinished()) {
 							if (minimax)
 								value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
-								algo->monteCarloTreeSearchTimed();
+								algo->monteCarloTreeSearchTimed(1);
 							algo->doBestMove();
 							printLogo();
 							printSituation(*current_game);
 							printBoard(*current_game);
-							//do something
 							if (minimax)
-								cout << "Minimax Value: " << value << "\n";
+								eValues.push_back(value);
 							minimax = !minimax;
 						}
-						//vector<Algorithms::Move> moves = allValidMoves(current_game->getCurrentTurn() == 0 ? Chess::WHITE_PLAYER : Chess::BLACK_PLAYER);
-						//for (const auto& i : moves)
-						//	cout << '(' << char('A' + i.present.iColumn) << i.present.iRow+1
-						//	<< '-' << char('A' + i.future.iColumn) << i.future.iRow+1 << ')';
+						//write data
+						record(true, "eValue", eValues);
 					}
 				}
 				else
@@ -1644,13 +1666,43 @@ int main()
 					else
 					{
 						//clearScreen();
-						algo->monteCarloTreeSearchTimed();
+						algo->monteCarloTreeSearchTimed(1);
 						algo->doBestMove();
 						printLogo();
 						printSituation(*current_game);
 						printBoard(*current_game);
-						cout << "Eval: " << algo->mctsEval << "\n";
-						cout << "Eval: " << algo->mctsActualTime << "\n";
+						cout << "Evalue: " << algo->mctsEval << "\n";
+						cout << "Actual time: " << algo->mctsActualTime << "\n";
+					}
+				}
+				else
+				{
+					cout << "No game running!\n";
+				}
+
+			}
+			break;
+
+			case 'O'://just minimax once
+			case 'o':
+			{
+				if (NULL != current_game)
+				{
+					if (current_game->isFinished())
+					{
+						cout << "This game has already finished!\n";
+					}
+					else
+					{
+						//clearScreen();
+						int value;
+						value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+						algo->doBestMove();
+						printLogo();
+						printSituation(*current_game);
+						printBoard(*current_game);
+						//do something
+						cout << "Minimax Value: " << value << "\n";
 					}
 				}
 				else

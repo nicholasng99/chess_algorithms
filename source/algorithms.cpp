@@ -132,10 +132,12 @@ int Algorithms::minimaxSearchTimed(bool maximizer, int depth, int alpha, int bet
 
 bool Algorithms::monteCarloTreeSearch(int seconds)
 {
+	nodesCreated = 0;
 	save();
 	//initialize tree if doesnt exists
 	if (MCTree == nullptr) {//first call
 		MCTree = new Node(*current_game, eachMove);
+		totalNodesCreated++;
 		nodesCreated++;
 	}
 	else {//set child node to root if exists else make new tree root
@@ -159,6 +161,7 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 			if (!found) {
 				delete MCTree;//the child does not exist it is safe to delete the whole tree
 				MCTree = new Node(*current_game, eachMove);
+				totalNodesCreated++;
 				nodesCreated++;
 			}
 		}
@@ -193,6 +196,7 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 			movePiece(randomMove);
 			leaf = leaf->addChild(new Node(*current_game, eachMove));
 			*current_game = leaf->data;
+			totalNodesCreated++;
 			nodesCreated++;
 		}
 		//simulation - expand the child node randomly till finished
