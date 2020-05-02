@@ -46,6 +46,10 @@ void Algorithms::load()
 
 int Algorithms::minimaxSearch(bool maximizer, int depth, int alpha, int beta)
 {
+	if (depth == 0)
+		gamesEvalauted = 0;
+	totalEvaluated++;
+	gamesEvalauted++;
 	if (depth >= MAX_DEPTH) {
 		return current_game->evaluate();
 	}
@@ -118,8 +122,10 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 {
 	save();
 	//initialize tree if doesnt exists
-	if (MCTree == nullptr)//first call
+	if (MCTree == nullptr) {//first call
 		MCTree = new Node(*current_game, eachMove);
+		nodesCreated++;
+	}
 	else {//set child node to root if exists else make new tree root
 		//second call and after
 		//check if last call was mcts implying mcts vs mcts
@@ -141,6 +147,7 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 			if (!found) {
 				delete MCTree;//the child does not exist it is safe to delete the whole tree
 				MCTree = new Node(*current_game, eachMove);
+				nodesCreated++;
 			}
 		}
 	}
@@ -174,6 +181,7 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 			movePiece(randomMove);
 			leaf = leaf->addChild(new Node(*current_game, eachMove));
 			*current_game = leaf->data;
+			nodesCreated++;
 		}
 		//simulation - expand the child node randomly till finished
 		int result = -2;
@@ -210,6 +218,7 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 	saves->pop();
 	//assign best move the best move
 	bestMove = MCTree->bestChild()->getLastMove();
+	minimaxEval = MCTree->bestChild()->data.evaluate();
 	return true;
 }
 

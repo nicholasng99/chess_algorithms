@@ -225,8 +225,8 @@ public:
 
 	//vars for performance logging
 	//minimax
-	float timeElapsed;
-	int gamesEvalauted = 0;
+	//float timeElapsed = 0.0f; unable to do here because of recursive nature
+	int gamesEvalauted = 0, totalEvaluated = 0;
 	//mcts
 	int nodesCreated = 0;
 	int minimaxEval = 0;
