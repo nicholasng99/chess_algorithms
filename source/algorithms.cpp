@@ -122,13 +122,12 @@ int Algorithms::minimaxSearchTimed(bool maximizer, int depth, int alpha, int bet
 {
 	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 	//function to record here
-	minimaxSearch(maximizer, depth, alpha, beta);
+	int value = minimaxSearch(maximizer, depth, alpha, beta);
 	//to here
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	std::chrono::duration<float> seconds = end - start;
-	timeElapsed = seconds.count();
-	cout << timeElapsed << "s\n";
-	return 0;
+	minimaxTimeElapsed = seconds.count();
+	return value;
 }
 
 bool Algorithms::monteCarloTreeSearch(int seconds)
@@ -231,8 +230,20 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 	saves->pop();
 	//assign best move the best move
 	bestMove = MCTree->bestChild()->getLastMove();
-	minimaxEval = MCTree->bestChild()->data.evaluate();
+	mctsEval = MCTree->bestChild()->data.evaluate();
 	return true;
+}
+
+bool Algorithms::monteCarloTreeSearchTimed(int seconds)
+{
+	std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+	//function to record here
+	bool value = monteCarloTreeSearch(seconds);
+	//to here
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+	std::chrono::duration<float> time = end - start;
+	mctsActualTime = time.count();
+	return value;
 }
 
 

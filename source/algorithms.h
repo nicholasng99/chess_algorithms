@@ -225,11 +225,12 @@ public:
 
 	//vars for performance logging
 	//minimax
-	float timeElapsed = 0.0f;
+	float minimaxTimeElapsed = 0.0f;
 	int gamesEvalauted = 0, totalEvaluated = 0;
 	//mcts
 	int nodesCreated = 0;
-	int minimaxEval = 0;
+	int mctsEval = 0;
+	float mctsActualTime = 0.0f;
 
 	Algorithms(Game* current_game, vector<Move>(*eachMove)(Chess::Player), bool (*movePiece)(Move));
 	~Algorithms();
@@ -253,6 +254,7 @@ public:
 	//returns true for success, false for terminal
 	bool monteCarloTreeSearch(int seconds = 10);
 
+	bool monteCarloTreeSearchTimed(int seconds = 10);
 private:
 	//original game copy to backup current state
 	Game game_copy = NULL;

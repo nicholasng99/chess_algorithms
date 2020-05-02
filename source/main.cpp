@@ -1498,7 +1498,7 @@ int main()
 							if (minimax)
 								value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
-								algo->monteCarloTreeSearch();
+								algo->monteCarloTreeSearchTimed();
 							algo->doBestMove();
 							printLogo();
 							printSituation(*current_game);
@@ -1540,7 +1540,7 @@ int main()
 							if (minimax)
 								value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
-								algo->monteCarloTreeSearch();
+								algo->monteCarloTreeSearchTimed();
 							algo->doBestMove();
 							printLogo();
 							printSituation(*current_game);
@@ -1599,7 +1599,7 @@ int main()
 			}
 			break;
 
-			case 'U'://minimax vs minimax
+			case 'U'://mcts vs mcts
 			case 'u':
 			{
 				if (NULL != current_game)
@@ -1614,7 +1614,7 @@ int main()
 						bool player1 = true;
 						int time1 = 1, time2 = 2;
 						while (!current_game->isFinished()) {
-							algo->monteCarloTreeSearch(player1 ? time1 : time2);
+							algo->monteCarloTreeSearchTimed(player1 ? time1 : time2);
 							algo->doBestMove();
 							printLogo();
 							printSituation(*current_game);
@@ -1622,6 +1622,35 @@ int main()
 							//do something
 							player1 = !player1;
 						}
+					}
+				}
+				else
+				{
+					cout << "No game running!\n";
+				}
+
+			}
+			break;
+
+			case 'I'://just mcts once
+			case 'i':
+			{
+				if (NULL != current_game)
+				{
+					if (current_game->isFinished())
+					{
+						cout << "This game has already finished!\n";
+					}
+					else
+					{
+						//clearScreen();
+						algo->monteCarloTreeSearchTimed();
+						algo->doBestMove();
+						printLogo();
+						printSituation(*current_game);
+						printBoard(*current_game);
+						cout << "Eval: " << algo->mctsEval << "\n";
+						cout << "Eval: " << algo->mctsActualTime << "\n";
 					}
 				}
 				else
