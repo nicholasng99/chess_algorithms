@@ -213,7 +213,7 @@ public:
 		}
 	};
 
-	const int MAX_DEPTH = 5;
+	int MAX_DEPTH = 5;
 	const int TIME_LIMIT = 5;
 	Move bestMove;
 	//game pointer
@@ -223,11 +223,24 @@ public:
 	//move piece function pointer
 	bool (*movePiece)(Move) { nullptr };
 
+	//vars for performance logging
+	//minimax
+	float timeElapsed;
+	int gamesEvalauted = 0;
+	//mcts
+	int nodesCreated = 0;
+	int minimaxEval = 0;
+
 	Algorithms(Game* current_game, vector<Move>(*eachMove)(Chess::Player), bool (*movePiece)(Move));
 	~Algorithms();
 
+	//do the best move after calling a search algorithm
 	bool doBestMove();
 
+	//set max depth of minimax search
+	void setMaxDepth(int depth);
+
+	//cast bool to player enum
 	Chess::Player player(const bool maximizer);
 
 	void save();

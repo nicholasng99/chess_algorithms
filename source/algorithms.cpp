@@ -24,6 +24,11 @@ bool Algorithms::doBestMove()
 	return movePiece(bestMove);
 }
 
+void Algorithms::setMaxDepth(int depth)
+{
+	MAX_DEPTH = depth > 0 ? depth : MAX_DEPTH;
+}
+
 Chess::Player Algorithms::player(const bool maximizer)
 {
 	return maximizer ? Chess::WHITE_PLAYER : Chess::BLACK_PLAYER;

@@ -1494,7 +1494,7 @@ int main()
 						//clearScreen();
 						bool minimax = true;
 						int value;
-						while (!current_game->isFinished()){
+						while (!current_game->isFinished()) {
 							if (minimax)
 								value = algo->minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
@@ -1549,6 +1549,78 @@ int main()
 							if (minimax)
 								cout << "Minimax Value: " << value << "\n";
 							minimax = !minimax;
+						}
+					}
+				}
+				else
+				{
+					cout << "No game running!\n";
+				}
+
+			}
+			break;
+
+
+			case 'Y'://minimax vs minimax
+			case 'y':
+			{
+				if (NULL != current_game)
+				{
+					if (current_game->isFinished())
+					{
+						cout << "This game has already finished!\n";
+					}
+					else
+					{
+						//clearScreen();
+						bool player1 = true;
+						int value, depth1 = 1, depth2 = 2;
+						while (!current_game->isFinished()) {
+							if (player1)
+								algo->setMaxDepth(depth1);
+							else
+								algo->setMaxDepth(depth2);
+							value = algo->minimaxSearch(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+							algo->doBestMove();
+							printLogo();
+							printSituation(*current_game);
+							printBoard(*current_game);
+							//do something
+							cout << "Minimax Value: " << value << "\n";
+							player1 = !player1;
+						}
+					}
+				}
+				else
+				{
+					cout << "No game running!\n";
+				}
+
+			}
+			break;
+
+			case 'U'://minimax vs minimax
+			case 'u':
+			{
+				if (NULL != current_game)
+				{
+					if (current_game->isFinished())
+					{
+						cout << "This game has already finished!\n";
+					}
+					else
+					{
+						//clearScreen();
+						bool player1 = true;
+						int time1 = 1, time2 = 2;
+						while (!current_game->isFinished()) {
+							algo->monteCarloTreeSearch(player1 ? time1 : time2);
+							algo->doBestMove();
+							printLogo();
+							printSituation(*current_game);
+							printBoard(*current_game);
+							//do something
+							player1 = !player1;
 						}
 					}
 				}
