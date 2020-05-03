@@ -1,9 +1,12 @@
 Endgame, White, Parameter, Move,number_of_nodes
-0,False,5,1,280
-0,False,5,2,204
-0,False,5,3,290
-0,False,5,4,281
-0,False,5,5,313
-0,False,5,6,329
-0,False,5,7,331
-0,False,5,8,318
+0,False,5,1,340
+0,False,5,2,335
+0,False,5,3,360
+0,False,5,4,328
+0,False,5,5,394
+0,False,5,6,390
+0,False,5,7,390
+0,False,5,8,389
+0,False,5,9,460
+0,False,5,10,449
+0,False,5,11,460

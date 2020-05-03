@@ -1,10 +1,13 @@
 Endgame, White, Parameter, Move,evaluation_function
 0,True,5,1,50
 0,True,5,2,90
-0,True,5,3,100
-0,True,5,4,100
+0,True,5,3,90
+0,True,5,4,90
 0,True,5,5,110
-0,True,5,6,110
-0,True,5,7,110
-0,True,5,8,920
-0,True,5,9,920
+0,True,5,6,180
+0,True,5,7,190
+0,True,5,8,190
+0,True,5,9,230
+0,True,5,10,240
+0,True,5,11,1080
+0,True,5,12,1080

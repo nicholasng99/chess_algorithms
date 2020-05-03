@@ -187,13 +187,14 @@ public:
 	//piece value of each piece type
 	int pieceValue(int row, int col) const;
 	//round tracker for fifty move rule
-
 	int fiftyMovesTracker = 0;
-	//can the fifty move rule be applied
+	//winner of the game 1 is white -1 is black
+	int winner = 0;
 
 	void setStaleMate();
 	bool stalemate = false;
 
+	//can the fifty move rule be applied
 	bool fiftyMoveRule();
 private:
 

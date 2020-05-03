@@ -1404,6 +1404,36 @@ void record(int endgameNumber, bool minimax, bool white, int param, string fileN
 	file.close();
 }
 
+void minimaxHistory(int endgameNum, int param, bool white, string opponent, int oppoParam,
+	int win, int draw, int lose, int moveNum) {
+	string path = "../results/minimaxHistory.csv";
+	std::ifstream check(path);
+	std::ofstream file;
+	file.open(path, std::ofstream::out | std::ofstream::app);
+	if (!check)
+		file << "Endgame,Algo,Parameter,White,Opponenet,Opponent Parameter,Win,Draw,Lose,Move Num\n";
+	check.close();
+	//write data
+	file << endgameNum << ',' << "Minimax" << ',' << param << ',' << (white ? "True" : "False") << ',' <<
+		opponent << ',' << oppoParam << ',' << win << ',' << draw << ',' << lose << ',' << moveNum << "\n";
+	file.close();
+}
+
+void mctsHistory(int endgameNum, int param, bool white, string opponent, int oppoParam,
+	int win, int draw, int lose, int moveNum) {
+	string path = "../results/mctsHistory.csv";
+	std::ifstream check(path);
+	std::ofstream file;
+	file.open(path, std::ofstream::out | std::ofstream::app);
+	if (!check)
+		file << "Endgame,Algo,Parameter,White,Opponenet,Opponent Parameter,Win,Draw,Lose,Move Num\n";
+	check.close();
+	//write data
+	file << endgameNum << ',' << "MCTS" << ',' << param << ',' << (white ? "True" : "False") << ',' <<
+		opponent << ',' << oppoParam << ',' << win << ',' << draw << ',' << lose << ',' << moveNum << "\n";
+	file.close();
+}
+
 int main()
 {
 	bool bRun = true;
@@ -1565,6 +1595,16 @@ int main()
 						record(endgameNo, false, false, time, "evaluation_function", mctsEval);
 						record(endgameNo, false, false, time, "number_of_nodes", mctsNodes);
 						record(endgameNo, false, false, time, "processing_time", mctsTime);
+						int win = 0, draw = 0, lose = 0;
+						if (current_game->winner != 0)
+							if (current_game->winner > 0)
+								win = 1;
+							else
+								lose = 1;
+						else
+							draw = 1;
+						minimaxHistory(endgameNo, maxDepth, true, "MCTS", time, win, draw, lose, mmEval.size());
+						mctsHistory(endgameNo, time, false, "Minimax", maxDepth, lose, draw, win, mmEval.size());
 					}
 				}
 				else
@@ -1586,23 +1626,50 @@ int main()
 					}
 					else
 					{
-						//clearScreen();
+						//logging vars
+						//minimax
+						int maxDepth = 5;
+						vector<int> mmEval;
+						vector<int> mmNum;
+						vector<float> mmTime;
+						//mcts
+						int time = 5;//seconds
+						vector<int> mctsEval;
+						vector<int> mctsNodes;
+						vector<float> mctsTime;
+						//algo vars
 						bool minimax = false;
 						int value;
+						algo->setMaxDepth(maxDepth);
 						while (!current_game->isFinished()) {
 							if (minimax)
 								value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
-								algo->monteCarloTreeSearchTimed();
+								algo->monteCarloTreeSearchTimed(time);
 							algo->doBestMove();
 							printLogo();
 							printSituation(*current_game);
 							printBoard(*current_game);
-							//do something
-							if (minimax)
-								cout << "Minimax Value: " << value << "\n";
+							if (minimax && algo != nullptr) {
+								mmEval.push_back(value);
+								mmNum.push_back(algo->gamesEvalauted);
+								mmTime.push_back(algo->minimaxTimeElapsed);
+							}
+							else {
+								mctsEval.push_back(current_game->evaluate());
+								mctsNodes.push_back(algo->nodesCreated);
+								mctsTime.push_back(algo->mctsActualTime);
+							}
 							minimax = !minimax;
 						}
+						//write data
+						record(endgameNo, true, false, maxDepth, "evaluation_function", mmEval);
+						record(endgameNo, true, false, maxDepth, "number_of_evaluations", mmNum);
+						record(endgameNo, true, false, maxDepth, "processing_time", mmTime);
+
+						record(endgameNo, false, true, time, "evaluation_function", mctsEval);
+						record(endgameNo, false, true, time, "number_of_nodes", mctsNodes);
+						record(endgameNo, false, true, time, "processing_time", mctsTime);
 					}
 				}
 				else

@@ -1925,6 +1925,8 @@ bool Game::isCheckMate()
 
 	// If the game has ended, store in the class variable
 	m_bGameFinished = bCheckmate;
+	if (bCheckmate)
+		winner = getCurrentTurn() == 0 ? -1 : 1;
 
 	return bCheckmate;
 }

@@ -1,10 +1,13 @@
 Endgame, White, Parameter, Move,number_of_evaluations
 0,True,5,1,37915
 0,True,5,2,34164
-0,True,5,3,67549
-0,True,5,4,46981
-0,True,5,5,27354
-0,True,5,6,54371
-0,True,5,7,45348
-0,True,5,8,41855
-0,True,5,9,61170
+0,True,5,3,102891
+0,True,5,4,265606
+0,True,5,5,187159
+0,True,5,6,88376
+0,True,5,7,66591
+0,True,5,8,81408
+0,True,5,9,51181
+0,True,5,10,51258
+0,True,5,11,79496
+0,True,5,12,19363
