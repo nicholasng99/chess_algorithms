@@ -214,7 +214,6 @@ public:
 	};
 
 	int MAX_DEPTH = 5;
-	const int TIME_LIMIT = 5;
 	Move bestMove;
 	//game pointer
 	Game* current_game = nullptr;
@@ -252,9 +251,9 @@ public:
 	int minimaxSearchTimed(bool maximizer, int depth = 0, int alpha = std::numeric_limits<int>::min(), int beta = std::numeric_limits<int>::max());
 
 	//returns true for success, false for terminal
-	bool monteCarloTreeSearch(int seconds = 10);
+	bool monteCarloTreeSearch(int seconds = 5);
 
-	bool monteCarloTreeSearchTimed(int seconds = 10);
+	bool monteCarloTreeSearchTimed(int seconds = 5);
 private:
 	//original game copy to backup current state
 	Game game_copy = NULL;

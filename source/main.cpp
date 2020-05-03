@@ -1380,29 +1380,35 @@ vector<Algorithms::Move> allValidMoves(Chess::Player player) {
 // Methods for results logging
 //---------------------------------------------------------------------------------------
 template <typename T>
-void record(bool minimax, string fileName, vector<T>& data) {
+void record(int endgameNumber, bool minimax, bool white, int param, string fileName, vector<T>& data) {
+	string columnName = fileName;
 	string path = "../results/";
-	if (minimax)
+	if (minimax) {
 		path += "minimax/";
-	else
+		fileName = (white ? "_MM_W_" : "_MM_") + std::to_string(param) + "_" + fileName;
+	}
+	else {
 		path += "mcts/";
-	path += fileName;
-	path += ".csv";
+		fileName = (white ? "_MCTS_W_" : "_MCTS_") + std::to_string(param) + "_" + fileName;
+	}
+	path += "EG" + std::to_string(endgameNumber);
+	path += fileName + ".csv";
 
 	std::ofstream file(path);
 	//write data with file <<
-	file << "Move," << fileName << "\n";
+	file << "Endgame, White, Parameter, Move," << columnName << "\n";
 	for (int i = 0; i < data.size(); i++) {
-		file << (i + 1) << "," << data[i] << "\n";
+		file << endgameNumber << ',' << (white ? "True" : "False") << ',' <<
+			param << ',' << (i + 1) << "," << data[i] << "\n";
 	}
 	file.close();
-	createNextMessage("Game is logged to " + path + "\n");
 }
 
 int main()
 {
 	bool bRun = true;
 	Algorithms* algo = nullptr;
+	int endgameNo = -1;
 
 	// Clear screen an print the logo
 	clearScreen();
@@ -1437,6 +1443,7 @@ int main()
 					getline(cin, input);
 				} while (!(!input.empty() && std::find_if(input.begin(), input.end(), [](unsigned char c) {
 					return !std::isdigit(c); }) == input.end()));
+				endgameNo = stoi(input);
 				newEndGame(stoi(input));
 				delete algo;
 				algo = new Algorithms(current_game, allValidMoves, movePiece);
@@ -1514,26 +1521,50 @@ int main()
 					}
 					else
 					{
-						//loggin vars
-						vector<int> eValues;
+						//logging vars
+						//minimax
+						int maxDepth = 5;
+						vector<int> mmEval;
+						vector<int> mmNum;
+						vector<float> mmTime;
+						//mcts
+						int time = 5;//seconds
+						vector<int> mctsEval;
+						vector<int> mctsNodes;
+						vector<float> mctsTime;
 						//algo vars
 						bool minimax = true;
 						int value;
+						algo->setMaxDepth(maxDepth);
 						while (!current_game->isFinished()) {
 							if (minimax)
 								value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
 							else
-								algo->monteCarloTreeSearchTimed(1);
+								algo->monteCarloTreeSearchTimed(time);
 							algo->doBestMove();
 							printLogo();
 							printSituation(*current_game);
 							printBoard(*current_game);
-							if (minimax)
-								eValues.push_back(value);
+							if (minimax && algo != nullptr) {
+								mmEval.push_back(value);
+								mmNum.push_back(algo->gamesEvalauted);
+								mmTime.push_back(algo->minimaxTimeElapsed);
+							}
+							else {
+								mctsEval.push_back(current_game->evaluate());
+								mctsNodes.push_back(algo->nodesCreated);
+								mctsTime.push_back(algo->mctsActualTime);
+							}
 							minimax = !minimax;
 						}
 						//write data
-						record(true, "eValue", eValues);
+						record(endgameNo, true, true, maxDepth, "evaluation_function", mmEval);
+						record(endgameNo, true, true, maxDepth, "number_of_evaluations", mmNum);
+						record(endgameNo, true, true, maxDepth, "processing_time", mmTime);
+
+						record(endgameNo, false, false, time, "evaluation_function", mctsEval);
+						record(endgameNo, false, false, time, "number_of_nodes", mctsNodes);
+						record(endgameNo, false, false, time, "processing_time", mctsTime);
 					}
 				}
 				else
