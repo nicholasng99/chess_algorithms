@@ -1,0 +1,9 @@
+Endgame,Algo,Parameter,White,Opponenet,Opponent Parameter,Win,Draw,Lose,Move Num
+0,Minimax,5,TRUE,MCTS,5,1,0,0,83
+0,Minimax,5,TRUE,MCTS,5,1,0,0,139
+0,Minimax,5,TRUE,MCTS,5,1,0,0,33
+0,Minimax,5,TRUE,MCTS,5,1,0,0,8
+0,Minimax,5,TRUE,MCTS,5,1,0,0,10
+0,Minimax,5,True,MCTS,5,1,0,0,12
+0,Minimax,2,True,Minimax,1,0,1,0,29
+0,Minimax,3,True,Minimax,1,1,0,0,33
