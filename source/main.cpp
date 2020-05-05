@@ -1379,48 +1379,65 @@ vector<Algorithms::Move> allValidMoves(Chess::Player player) {
 //---------------------------------------------------------------------------------------
 // Methods for results logging
 //---------------------------------------------------------------------------------------
-template <typename T>
-void record(int endgameNumber, bool minimax, bool white, int param, string fileName, vector<T>& data) {
-	string columnName = fileName;
+//template <typename T>
+//void record(int endgameNumber, bool minimax, bool white, int param, string fileName, vector<T>& data) {
+//	string columnName = fileName;
+//	string path = "../results/";
+//	if (minimax) {
+//		path += "minimax/";
+//		fileName = (white ? "_MM_W_" : "_MM_") + std::to_string(param) + "_" + fileName;
+//	}
+//	else {
+//		path += "mcts/";
+//		fileName = (white ? "_MCTS_W_" : "_MCTS_") + std::to_string(param) + "_" + fileName;
+//	}
+//	path += "EG" + std::to_string(endgameNumber);
+//	path += fileName + ".csv";
+//
+//	std::ifstream check(path);
+//	std::ofstream file;
+//	file.open(path, std::ofstream::out | std::ofstream::app);
+//	//write data with file <<
+//	if (!check)
+//		file << "Endgame, White, Parameter, Move," << columnName << "\n";
+//	check.close();
+//	for (int i = 0; i < data.size(); i++) {
+//		file << endgameNumber << ',' << (white ? "True" : "False") << ',' <<
+//			param << ',' << (i + 1) << "," << data[i] << "\n";
+//	}
+//	file.close();
+//}
+template <typename T, typename U, typename P>
+void record(int endgameNumber, bool minimax, bool white, int param, vector<T>& evals, vector<U>& num, vector<P>& time) {
 	string path = "../results/";
-	if (minimax) {
-		path += "minimax/";
-		fileName = (white ? "_MM_W_" : "_MM_") + std::to_string(param) + "_" + fileName;
-	}
-	else {
-		path += "mcts/";
-		fileName = (white ? "_MCTS_W_" : "_MCTS_") + std::to_string(param) + "_" + fileName;
-	}
-	path += "EG" + std::to_string(endgameNumber);
-	path += fileName + ".csv";
-
+	path += (minimax ? "Minimax.csv" : "MCTS.csv");
 	std::ifstream check(path);
 	std::ofstream file;
 	file.open(path, std::ofstream::out | std::ofstream::app);
 	//write data with file <<
 	if (!check)
-		file << "Endgame, White, Parameter, Move," << columnName << "\n";
+		file << "Endgame,White,Parameter,Move,Evaluation_Function," << (minimax ? "Evaluation_Number" : "Nodes_Number") << ",Time\n";
 	check.close();
-	for (int i = 0; i < data.size(); i++) {
+	for (int i = 0; i < evals.size(); i++) {
 		file << endgameNumber << ',' << (white ? "True" : "False") << ',' <<
-			param << ',' << (i + 1) << "," << data[i] << "\n";
+			param << ',' << (i + 1) << "," << evals[i] << "," << num[i] << "," << time[i] << "\n";
 	}
 	file.close();
 }
 
 void minimaxHistory(int endgameNum, int param, bool white, string opponent, int oppoParam,
-	int win, int draw, int lose, int moveNum, int totalEvals, float totalTime) {
+	int win, int draw, int lose, int moveNum, int totalEvals, float totalTime, int totalEvals2, float totalTime2) {
 	string path = "../results/minimaxHistory.csv";
 	std::ifstream check(path);
 	std::ofstream file;
 	file.open(path, std::ofstream::out | std::ofstream::app);
 	if (!check)
-		file << "Endgame,Algo,Parameter,White,Opponenet,Opponent_Parameter,Win,Draw,Lose,Move_Num,Total_Evaluations,Total_Time\n";
+		file << "Endgame,Algo,Parameter,White,Opponenet,Opponent_Parameter,Win,Draw,Lose,Move_Num,Total_Evaluations,Total_Time,Oppo_Total_Num,Oppo_Total_Time\n";
 	check.close();
 	//write data
 	file << endgameNum << ',' << "Minimax" << ',' << param << ',' << (white ? "True" : "False") << ',' <<
 		opponent << ',' << oppoParam << ',' << win << ',' << draw << ',' << lose << ',' << moveNum << ',' <<
-		totalEvals << ',' << totalTime << "\n";
+		totalEvals << ',' << totalTime << ',' << totalEvals2 << ',' << totalTime2 << "\n";
 	file.close();
 }
 
@@ -1563,11 +1580,13 @@ int main()
 						vector<int> mmEval;
 						vector<int> mmNum;
 						vector<float> mmTime;
+						float totalTime = 0;
 						//mcts
 						int time = 5;//seconds
 						vector<int> mctsEval;
 						vector<int> mctsNodes;
 						vector<float> mctsTime;
+						float totalTime2 = 0;
 						//algo vars
 						bool minimax = true;
 						int value;
@@ -1585,22 +1604,19 @@ int main()
 								mmEval.push_back(value);
 								mmNum.push_back(algo->gamesEvalauted);
 								mmTime.push_back(algo->minimaxTimeElapsed);
+								totalTime += algo->minimaxTimeElapsed;
 							}
 							else {
 								mctsEval.push_back(current_game->evaluate());
 								mctsNodes.push_back(algo->nodesCreated);
 								mctsTime.push_back(algo->mctsActualTime);
+								totalTime2 += algo->mctsActualTime;
 							}
 							minimax = !minimax;
 						}
 						//write data
-						record(endgameNo, true, true, maxDepth, "evaluation_function", mmEval);
-						record(endgameNo, true, true, maxDepth, "number_of_evaluations", mmNum);
-						record(endgameNo, true, true, maxDepth, "processing_time", mmTime);
-
-						record(endgameNo, false, false, time, "evaluation_function", mctsEval);
-						record(endgameNo, false, false, time, "number_of_nodes", mctsNodes);
-						record(endgameNo, false, false, time, "processing_time", mctsTime);
+						record(endgameNo, true, true, maxDepth, mmEval, mmNum, mmTime);
+						record(endgameNo, false, false, time, mctsEval, mctsNodes, mctsTime);
 						int win = 0, draw = 0, lose = 0;
 						if (current_game->winner != 0)
 							if (current_game->winner > 0)
@@ -1609,8 +1625,8 @@ int main()
 								lose = 1;
 						else
 							draw = 1;
-						minimaxHistory(endgameNo, maxDepth, true, "MCTS", time, win, draw, lose, mmEval.size(), algo->totalEvaluated, algo->minimaxTimeElapsed);
-						mctsHistory(endgameNo, time, false, "Minimax", maxDepth, lose, draw, win, mmEval.size(), algo->totalNodesCreated, algo->mctsActualTime);
+						minimaxHistory(endgameNo, maxDepth, true, "MCTS", time, win, draw, lose, mmEval.size(), algo->totalEvaluated, totalTime, algo->totalNodesCreated, totalTime2);
+						mctsHistory(endgameNo, time, false, "Minimax", maxDepth, lose, draw, win, mmEval.size(), algo->totalNodesCreated, totalTime2);
 					}
 				}
 				else
@@ -1638,11 +1654,13 @@ int main()
 						vector<int> mmEval;
 						vector<int> mmNum;
 						vector<float> mmTime;
+						float totalTime = 0;
 						//mcts
 						int time = 5;//seconds
 						vector<int> mctsEval;
 						vector<int> mctsNodes;
 						vector<float> mctsTime;
+						float totalTime2 = 0;
 						//algo vars
 						bool minimax = false;//mcts is first
 						int value;
@@ -1660,22 +1678,19 @@ int main()
 								mmEval.push_back(value);
 								mmNum.push_back(algo->gamesEvalauted);
 								mmTime.push_back(algo->minimaxTimeElapsed);
+								totalTime += algo->minimaxTimeElapsed;
 							}
 							else {
 								mctsEval.push_back(current_game->evaluate());
 								mctsNodes.push_back(algo->nodesCreated);
 								mctsTime.push_back(algo->mctsActualTime);
+								totalTime2 += algo->mctsActualTime;
 							}
 							minimax = !minimax;
 						}
 						//write data
-						record(endgameNo, true, true, maxDepth, "evaluation_function", mmEval);
-						record(endgameNo, true, true, maxDepth, "number_of_evaluations", mmNum);
-						record(endgameNo, true, true, maxDepth, "processing_time", mmTime);
-
-						record(endgameNo, false, false, time, "evaluation_function", mctsEval);
-						record(endgameNo, false, false, time, "number_of_nodes", mctsNodes);
-						record(endgameNo, false, false, time, "processing_time", mctsTime);
+						record(endgameNo, true, false, maxDepth, mmEval, mmNum, mmTime);
+						record(endgameNo, false, true, time, mctsEval, mctsNodes, mctsTime);
 						int win = 0, draw = 0, lose = 0;
 						if (current_game->winner != 0)
 							if (current_game->winner > 0)
@@ -1684,8 +1699,8 @@ int main()
 								lose = 1;
 						else
 							draw = 1;
-						minimaxHistory(endgameNo, maxDepth, true, "MCTS", time, win, draw, lose, mmEval.size(), algo->totalEvaluated, algo->minimaxTimeElapsed);
-						mctsHistory(endgameNo, time, false, "Minimax", maxDepth, lose, draw, win, mmEval.size(), algo->totalNodesCreated, algo->mctsActualTime);
+						minimaxHistory(endgameNo, maxDepth, true, "MCTS", time, win, draw, lose, mmEval.size(), algo->totalEvaluated, totalTime, algo->totalNodesCreated, totalTime2);
+						mctsHistory(endgameNo, time, false, "Minimax", maxDepth, lose, draw, win, mmEval.size(), algo->totalNodesCreated, totalTime2);
 
 					}
 				}
@@ -1706,10 +1721,14 @@ int main()
 				vector<int> mmEval;
 				vector<int> mmNum;
 				vector<float> mmTime;
+				float totalTime = 0;
+				int totalEvals = 0;
 				//minimax 2
 				vector<int> mmEval2;
 				vector<int> mmNum2;
 				vector<float> mmTime2;
+				float totalTime2 = 0;
+				int totalEvals2 = 0;
 				//algo vars
 				bool player1 = true;
 				int value, depth1 = 2, depth2 = 1;
@@ -1725,7 +1744,7 @@ int main()
 								algo = new Algorithms(current_game, allValidMoves, movePiece);
 
 								//code here
-
+								player1 = true;
 								while (!current_game->isFinished()) {
 									if (player1)
 										algo->setMaxDepth(depth1);
@@ -1741,22 +1760,21 @@ int main()
 										mmEval.push_back(value);
 										mmNum.push_back(algo->gamesEvalauted);
 										mmTime.push_back(algo->minimaxTimeElapsed);
+										totalTime += algo->minimaxTimeElapsed;
+										totalEvals += algo->gamesEvalauted;
 									}
 									else {
 										mmEval2.push_back(value);
 										mmNum2.push_back(algo->gamesEvalauted);
 										mmTime2.push_back(algo->minimaxTimeElapsed);
+										totalTime2 += algo->minimaxTimeElapsed;
+										totalEvals2 += algo->gamesEvalauted;
 									}
 									player1 = !player1;
 								}
 								//write data
-								record(endgameNo, true, true, depth1, "evaluation_function", mmEval);
-								record(endgameNo, true, true, depth1, "number_of_evaluations", mmNum);
-								record(endgameNo, true, true, depth1, "processing_time", mmTime);
-
-								record(endgameNo, true, false, depth2, "evaluation_function", mmEval2);
-								record(endgameNo, true, false, depth2, "number_of_evaluations", mmNum2);
-								record(endgameNo, true, false, depth2, "processing_time", mmTime2);
+								record(endgameNo, true, true, depth1, mmEval, mmNum, mmTime);
+								record(endgameNo, true, false, depth2, mmEval2, mmNum2, mmTime2);
 								int win = 0, draw = 0, lose = 0;
 								if (current_game->winner != 0)
 									if (current_game->winner > 0)
@@ -1765,7 +1783,7 @@ int main()
 										lose = 1;
 								else
 									draw = 1;
-								minimaxHistory(endgameNo, depth1, true, "Minimax", depth2, win, draw, lose, mmEval.size(), algo->totalEvaluated, algo->minimaxTimeElapsed);
+								minimaxHistory(endgameNo, depth1, true, "Minimax", depth2, win, draw, lose, mmEval.size(), totalEvals, totalTime, totalEvals2, totalTime2);
 
 
 							}
