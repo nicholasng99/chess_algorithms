@@ -1394,9 +1394,13 @@ void record(int endgameNumber, bool minimax, bool white, int param, string fileN
 	path += "EG" + std::to_string(endgameNumber);
 	path += fileName + ".csv";
 
-	std::ofstream file(path);
+	std::ifstream check(path);
+	std::ofstream file;
+	file.open(path, std::ofstream::out | std::ofstream::app);
 	//write data with file <<
-	file << "Endgame, White, Parameter, Move," << columnName << "\n";
+	if (!check)
+		file << "Endgame, White, Parameter, Move," << columnName << "\n";
+	check.close();
 	for (int i = 0; i < data.size(); i++) {
 		file << endgameNumber << ',' << (white ? "True" : "False") << ',' <<
 			param << ',' << (i + 1) << "," << data[i] << "\n";
@@ -1709,60 +1713,62 @@ int main()
 				//algo vars
 				bool player1 = true;
 				int value, depth1 = 2, depth2 = 1;
-				for (int x = 1; x < 5; x++) {
-					for (int i = 2; i < 6; i++) {
+				for (int x = 1; x < 5; x++) {//each endgame
+					for (int i = 1; i < 7; i++) {//depth 1 params
 						depth1 = i;
-						for (int j = 1; j < 6; j++) {
-							depth2 = j;
-							endgameNo = x;
-							newEndGame(endgameNo);
-							delete algo;
-							algo = new Algorithms(current_game, allValidMoves, movePiece);
+						for (int j = 1; j < 7 && i != j; j++) {//depth2 params
+							for (int k = 0; k < 5; k++) {//repeat each game 5 times
+								depth2 = j;
+								endgameNo = x;
+								newEndGame(endgameNo);
+								delete algo;
+								algo = new Algorithms(current_game, allValidMoves, movePiece);
 
-							//code here
+								//code here
 
-							while (!current_game->isFinished()) {
-								if (player1)
-									algo->setMaxDepth(depth1);
+								while (!current_game->isFinished()) {
+									if (player1)
+										algo->setMaxDepth(depth1);
+									else
+										algo->setMaxDepth(depth2);
+									value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+
+									algo->doBestMove();
+									/*printLogo();
+									printSituation(*current_game);
+									printBoard(*current_game);*/
+									if (player1 && algo != nullptr) {
+										mmEval.push_back(value);
+										mmNum.push_back(algo->gamesEvalauted);
+										mmTime.push_back(algo->minimaxTimeElapsed);
+									}
+									else {
+										mmEval2.push_back(value);
+										mmNum2.push_back(algo->gamesEvalauted);
+										mmTime2.push_back(algo->minimaxTimeElapsed);
+									}
+									player1 = !player1;
+								}
+								//write data
+								record(endgameNo, true, true, depth1, "evaluation_function", mmEval);
+								record(endgameNo, true, true, depth1, "number_of_evaluations", mmNum);
+								record(endgameNo, true, true, depth1, "processing_time", mmTime);
+
+								record(endgameNo, true, false, depth2, "evaluation_function", mmEval2);
+								record(endgameNo, true, false, depth2, "number_of_evaluations", mmNum2);
+								record(endgameNo, true, false, depth2, "processing_time", mmTime2);
+								int win = 0, draw = 0, lose = 0;
+								if (current_game->winner != 0)
+									if (current_game->winner > 0)
+										win = 1;
+									else
+										lose = 1;
 								else
-									algo->setMaxDepth(depth2);
-								value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+									draw = 1;
+								minimaxHistory(endgameNo, depth1, true, "Minimax", depth2, win, draw, lose, mmEval.size(), algo->totalEvaluated, algo->minimaxTimeElapsed);
 
-								algo->doBestMove();
-								/*printLogo();
-								printSituation(*current_game);
-								printBoard(*current_game);*/
-								if (player1 && algo != nullptr) {
-									mmEval.push_back(value);
-									mmNum.push_back(algo->gamesEvalauted);
-									mmTime.push_back(algo->minimaxTimeElapsed);
-								}
-								else {
-									mmEval2.push_back(value);
-									mmNum2.push_back(algo->gamesEvalauted);
-									mmTime2.push_back(algo->minimaxTimeElapsed);
-								}
-								player1 = !player1;
+
 							}
-							//write data
-							record(endgameNo, true, true, depth1, "evaluation_function", mmEval);
-							record(endgameNo, true, true, depth1, "number_of_evaluations", mmNum);
-							record(endgameNo, true, true, depth1, "processing_time", mmTime);
-
-							record(endgameNo, true, false, depth2, "evaluation_function", mmEval2);
-							record(endgameNo, true, false, depth2, "number_of_evaluations", mmNum2);
-							record(endgameNo, true, false, depth2, "processing_time", mmTime2);
-							int win = 0, draw = 0, lose = 0;
-							if (current_game->winner != 0)
-								if (current_game->winner > 0)
-									win = 1;
-								else
-									lose = 1;
-							else
-								draw = 1;
-							minimaxHistory(endgameNo, depth1, true, "Minimax", depth2, win, draw, lose, mmEval.size(),algo->totalEvaluated, algo->minimaxTimeElapsed);
-
-
 						}
 					}
 				}
