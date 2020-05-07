@@ -1,4 +1,6 @@
 ﻿  main.cpp
-C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1791,146): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1880,140): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  Chess_console.vcxproj -> C:\Users\Nick\Source\Repos\chess_algorithms\source\x64\Debug\Chess_console.exe
+C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1632,160): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1633,162): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1726,146): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1817,140): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Chess_console.vcxproj -> C:\Users\Nick\source\repos\chess_algorithms\source\x64\Debug\Chess_console.exe

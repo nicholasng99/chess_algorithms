@@ -1566,73 +1566,74 @@ int main()
 			case 'R'://minimax as white
 			case 'r':
 			{
-				//if (NULL != current_game)
-				//{
-				//	if (current_game->isFinished())
-				//	{
-				//		cout << "This game has already finished!\n";
-				//	}
-				//	else
-				//	{
-				//		//logging vars
-				//		//minimax
-				//		int maxDepth = 5;
-				//		vector<int> mmEval;
-				//		vector<int> mmNum;
-				//		vector<float> mmTime;
-				//		float totalTime = 0;
-				//		//mcts
-				//		int time = 5;//seconds
-				//		vector<int> mctsEval;
-				//		vector<int> mctsNodes;
-				//		vector<float> mctsTime;
-				//		float totalTime2 = 0;
-				//		//algo vars
-				//		bool minimax = true;
-				//		int value;
-				//		algo->setMaxDepth(maxDepth);
-				//		while (!current_game->isFinished()) {
-				//			if (minimax)
-				//				value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
-				//			else
-				//				algo->monteCarloTreeSearchTimed(time);
-				//			algo->doBestMove();
-				//			printLogo();
-				//			printSituation(*current_game);
-				//			printBoard(*current_game);
-				//			if (minimax && algo != nullptr) {
-				//				mmEval.push_back(value);
-				//				mmNum.push_back(algo->gamesEvalauted);
-				//				mmTime.push_back(algo->minimaxTimeElapsed);
-				//				totalTime += algo->minimaxTimeElapsed;
-				//			}
-				//			else {
-				//				mctsEval.push_back(current_game->evaluate());
-				//				mctsNodes.push_back(algo->nodesCreated);
-				//				mctsTime.push_back(algo->mctsActualTime);
-				//				totalTime2 += algo->mctsActualTime;
-				//			}
-				//			minimax = !minimax;
-				//		}
-				//		//write data
-				//		record(endgameNo, true, true, maxDepth, mmEval, mmNum, mmTime);
-				//		record(endgameNo, false, false, time, mctsEval, mctsNodes, mctsTime);
-				//		int win = 0, draw = 0, lose = 0;
-				//		if (current_game->winner != 0)
-				//			if (current_game->winner > 0)
-				//				win = 1;
-				//			else
-				//				lose = 1;
-				//		else
-				//			draw = 1;
-				//		minimaxHistory(endgameNo, maxDepth, true, "MCTS", time, win, draw, lose, mmEval.size(), algo->totalEvaluated, totalTime, algo->totalNodesCreated, totalTime2);
-				//		mctsHistory(endgameNo, time, false, "Minimax", maxDepth, lose, draw, win, mmEval.size(), algo->totalNodesCreated, totalTime2);
-				//	}
-				//}
-				//else
-				//{
-				//	cout << "No game running!\n";
-				//}
+
+				int value, depth = 5, time = 3;
+				for (int x = 0; x < 5; x++) {//each endgame
+					for (int k = 0; k < 10; k++) {//repeat each game 5 times
+						cout << x << ':' << k << "\n";
+						endgameNo = x;
+						newEndGame(endgameNo);
+						delete algo;
+						algo = new Algorithms(current_game, allValidMoves, movePiece);
+
+						//logging vars
+						//minimax
+						vector<int> mmEval;
+						vector<int> mmNum;
+						vector<float> mmTime;
+						float totalTime = 0;
+						//int totalEvals = 0;
+						//mcts
+						vector<int> mctsEval;
+						vector<int> mctsNodes;
+						vector<float> mctsTime;
+						float totalTime2 = 0;
+						//int totalNodes2 = 0;
+						//algo vars
+						bool player1 = true;
+						while (!current_game->isFinished()) {
+							if (totalTime > 600 || totalTime2 > 600)//caps games to 10 minutes
+								current_game->setStaleMate();
+							if (player1)
+								value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
+							else
+								algo->monteCarloTreeSearchTimed(time);
+							algo->doBestMove();
+							/*printLogo();
+							printSituation(*current_game);
+							printBoard(*current_game);*/
+							if (player1 && algo != nullptr) {
+								mmEval.push_back(value);
+								mmNum.push_back(algo->gamesEvalauted);
+								mmTime.push_back(algo->minimaxTimeElapsed);
+								totalTime += algo->minimaxTimeElapsed;
+								//totalEvals += algo->gamesEvalauted;
+							}
+							else {
+								mctsEval.push_back(current_game->evaluate());
+								mctsNodes.push_back(algo->nodesCreated);
+								mctsTime.push_back(algo->mctsActualTime);
+								totalTime += algo->mctsActualTime;
+								//totalNodes += algo->nodesCreated;
+							}
+							player1 = !player1;
+						}
+						//write data
+						record(endgameNo, true, true, depth, mmEval, mmNum, mmTime);
+						record(endgameNo, false, false, time, mctsEval, mctsNodes, mctsTime);
+						int win = 0, draw = 0, lose = 0;
+						if (current_game->winner != 0)
+							if (current_game->winner > 0)
+								win = 1;
+							else
+								lose = 1;
+						else
+							draw = 1;
+						minimaxHistory(endgameNo, depth, true, "MCTS", time, win, draw, lose, mmEval.size(), algo->totalEvaluated, totalTime, algo->totalNodesCreated, totalTime2);
+						mctsHistory(endgameNo, time, false, "Minimax", time, win, draw, lose, mctsEval.size(), algo->totalNodesCreated, totalTime2, algo->totalEvaluated, totalTime);
+
+					}
+				}
 
 			}
 			break;
@@ -1640,74 +1641,6 @@ int main()
 			case 'T'://mcts as whitte
 			case 't':
 			{
-				//if (NULL != current_game)
-				//{
-				//	if (current_game->isFinished())
-				//	{
-				//		cout << "This game has already finished!\n";
-				//	}
-				//	else
-				//	{
-				//		//logging vars
-				//		//minimax
-				//		int maxDepth = 5;
-				//		vector<int> mmEval;
-				//		vector<int> mmNum;
-				//		vector<float> mmTime;
-				//		float totalTime = 0;
-				//		//mcts
-				//		int time = 5;//seconds
-				//		vector<int> mctsEval;
-				//		vector<int> mctsNodes;
-				//		vector<float> mctsTime;
-				//		float totalTime2 = 0;
-				//		//algo vars
-				//		bool minimax = false;//mcts is first
-				//		int value;
-				//		algo->setMaxDepth(maxDepth);
-				//		while (!current_game->isFinished()) {
-				//			if (minimax)
-				//				value = algo->minimaxSearchTimed(current_game->getCurrentTurn() == Chess::WHITE_PLAYER);
-				//			else
-				//				algo->monteCarloTreeSearchTimed(time);
-				//			algo->doBestMove();
-				//			printLogo();
-				//			printSituation(*current_game);
-				//			printBoard(*current_game);
-				//			if (minimax && algo != nullptr) {
-				//				mmEval.push_back(value);
-				//				mmNum.push_back(algo->gamesEvalauted);
-				//				mmTime.push_back(algo->minimaxTimeElapsed);
-				//				totalTime += algo->minimaxTimeElapsed;
-				//			}
-				//			else {
-				//				mctsEval.push_back(current_game->evaluate());
-				//				mctsNodes.push_back(algo->nodesCreated);
-				//				mctsTime.push_back(algo->mctsActualTime);
-				//				totalTime2 += algo->mctsActualTime;
-				//			}
-				//			minimax = !minimax;
-				//		}
-				//		//write data
-				//		record(endgameNo, true, false, maxDepth, mmEval, mmNum, mmTime);
-				//		record(endgameNo, false, true, time, mctsEval, mctsNodes, mctsTime);
-				//		int win = 0, draw = 0, lose = 0;
-				//		if (current_game->winner != 0)
-				//			if (current_game->winner > 0)
-				//				win = 1;
-				//			else
-				//				lose = 1;
-				//		else
-				//			draw = 1;
-				//		minimaxHistory(endgameNo, maxDepth, true, "MCTS", time, win, draw, lose, mmEval.size(), algo->totalEvaluated, totalTime, algo->totalNodesCreated, totalTime2);
-				//		mctsHistory(endgameNo, time, false, "Minimax", maxDepth, lose, draw, win, mmEval.size(), algo->totalNodesCreated, totalTime2);
-
-				//	}
-				//}
-				//else
-				//{
-				//	cout << "No game running!\n";
-				//}
 
 			}
 			break;
@@ -1721,7 +1654,9 @@ int main()
 				for (int x = 0; x < 5; x++) {//each endgame
 					for (int i = 1; i < 6; i++) {//depth 1 params
 						depth1 = i;
-						for (int j = 1; j < 6 && i != j; j++) {//depth2 params
+						for (int j = 1; j < 6; j++) {//depth2 params
+							if (i == j)
+								continue;
 							for (int k = 0; k < 6; k++) {//repeat each game 5 times
 								cout << x << ":" << i << ":" << j << ":" << k << "\n";
 								depth2 = j;
@@ -1806,12 +1741,14 @@ int main()
 
 				int time1 = 1;//seconds
 				int time2 = 1;//seconds
-				for (int x = 2; x < 5; x++) {//each endgame
+				for (int x = 0; x < 5; x++) {//each endgame
 					endgameNo = x;
-					for (int i = 1; i < 6; i++) {//time 1 params
+					for (int i = 5; i > 0; i--) {//time 1 params
 						time1 = i;
-						for (int j = 1; j < 6 && i != j; j++) {//time 2 params
-							for (int k = 0; k < 5; k++) {//repeat each game 5 times
+						for (int j = 5; j > 0; j--) {//time 2 params
+							if (i == j)
+								continue;
+							for (int k = 0; k < 5; k++) {//repeat each game 10 times
 								cout << x << ":" << i << ":" << j << ":" << k << "\n";
 								time2 = j;
 								newEndGame(endgameNo);
