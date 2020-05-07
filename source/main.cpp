@@ -1806,12 +1806,12 @@ int main()
 
 				int time1 = 1;//seconds
 				int time2 = 1;//seconds
-				for (int x = 0; x < 5; x++) {//each endgame
+				for (int x = 2; x < 5; x++) {//each endgame
 					endgameNo = x;
 					for (int i = 1; i < 6; i++) {//time 1 params
 						time1 = i;
 						for (int j = 1; j < 6 && i != j; j++) {//time 2 params
-							for (int k = 0; k < 6; k++) {//repeat each game 5 times
+							for (int k = 0; k < 5; k++) {//repeat each game 5 times
 								cout << x << ":" << i << ":" << j << ":" << k << "\n";
 								time2 = j;
 								newEndGame(endgameNo);
