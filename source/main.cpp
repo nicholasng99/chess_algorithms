@@ -1567,8 +1567,8 @@ int main()
 			case 'r':
 			{
 
-				int value, depth = 5, time = 3;
-				for (int x = 0; x >= 0; x++) {//each endgame
+				int value, depth = 5, time = 10;
+				for (int x = 0; x < 5; x++) {//each endgame
 					endgameNo = x % 5;
 					cout << x << ':' << endgameNo << "\n";
 					newEndGame(endgameNo);
@@ -1612,7 +1612,7 @@ int main()
 							mctsEval.push_back(current_game->evaluate());
 							mctsNodes.push_back(algo->nodesCreated);
 							mctsTime.push_back(algo->mctsActualTime);
-							totalTime += algo->mctsActualTime;
+							totalTime2 += algo->mctsActualTime;
 							//totalNodes += algo->nodesCreated;
 						}
 						player1 = !player1;
@@ -1629,7 +1629,7 @@ int main()
 					else
 						draw = 1;
 					minimaxHistory(endgameNo, depth, true, "MCTS", time, win, draw, lose, mmEval.size(), algo->totalEvaluated, totalTime, algo->totalNodesCreated, totalTime2);
-					mctsHistory(endgameNo, time, false, "Minimax", time, win, draw, lose, mctsEval.size(), algo->totalNodesCreated, totalTime2, algo->totalEvaluated, totalTime);
+					mctsHistory(endgameNo, time, false, "Minimax", time, lose, draw, win, mctsEval.size(), algo->totalNodesCreated, totalTime2, algo->totalEvaluated, totalTime);
 
 				}
 
