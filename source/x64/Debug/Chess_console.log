@@ -1,7 +1,7 @@
 ﻿  main.cpp
 C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1631,159): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1632,162): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1704,160): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1632,160): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1704,162): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1705,161): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1789,146): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 C:\Users\Nick\source\repos\chess_algorithms\source\main.cpp(1879,139): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data

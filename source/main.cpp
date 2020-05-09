@@ -1598,9 +1598,9 @@ int main()
 						else
 							algo->monteCarloTreeSearchTimed(time);
 						algo->doBestMove();
-						/*printLogo();
+						printLogo();
 						printSituation(*current_game);
-						printBoard(*current_game);*/
+						printBoard(*current_game);
 						if (player1 && algo != nullptr) {
 							mmEval.push_back(value);
 							mmNum.push_back(algo->gamesEvalauted);
@@ -1629,7 +1629,7 @@ int main()
 					else
 						draw = 1;
 					minimaxHistory(endgameNo, depth, true, "MCTS", time, win, draw, lose, mmEval.size(), algo->totalEvaluated, totalTime, algo->totalNodesCreated, totalTime2);
-					mctsHistory(endgameNo, time, false, "Minimax", depth, lose, draw, win, mctsEval.size(), algo->totalNodesCreated, totalTime2, algo->totalEvaluated, totalTime);
+					mctsHistory(endgameNo, time, false, "Minimax", depth, lose, draw, win, mmEval.size(), algo->totalNodesCreated, totalTime2, algo->totalEvaluated, totalTime);
 
 				}
 
@@ -1640,7 +1640,7 @@ int main()
 			case 't':
 			{
 
-				int value, depth = 1, time = 10;
+				int value, depth = 5, time = 3;
 				for (int x = 0; x >= 0; x++) {//each endgame
 					endgameNo = x % 5;
 					cout << x << ':' << endgameNo << "\n";
@@ -1701,7 +1701,7 @@ int main()
 							lose = 1;
 					else
 						draw = 1;
-					minimaxHistory(endgameNo, depth, false, "MCTS", time, lose, draw, win, mmEval.size(), algo->totalEvaluated, totalTime, algo->totalNodesCreated, totalTime2);
+					minimaxHistory(endgameNo, depth, false, "MCTS", time, lose, draw, win, mctsEval.size(), algo->totalEvaluated, totalTime, algo->totalNodesCreated, totalTime2);
 					mctsHistory(endgameNo, time, true, "Minimax", depth, win, draw, lose, mctsEval.size(), algo->totalNodesCreated, totalTime2, algo->totalEvaluated, totalTime);
 
 				}
