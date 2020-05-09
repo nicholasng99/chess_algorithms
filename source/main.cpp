@@ -1804,11 +1804,11 @@ int main()
 
 				int time1 = 1;//seconds
 				int time2 = 1;//seconds
-				for (int x = 0; x >= 0; x++) {//each endgame
+				for (int x = 4; x >= 0; x++) {//each endgame
 					endgameNo = x % 5;
-					for (int i = 1; i < 6; i++) {//time 1 params
+					for (int i = 3; i < 6; i++) {//time 1 params
 						time1 = i;
-						for (int j = 1; j < 6; j++) {//time 2 params
+						for (int j = 2; j < 6; j++) {//time 2 params
 							if (i == j)
 								continue;
 							cout << x << ":" << i << ":" << j << "\n";
