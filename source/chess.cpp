@@ -297,9 +297,13 @@ Game& Game::operator=(const Game& g)
 
 bool Game::operator==(const Game& g)
 {
-	for (int i = 0; i < 8;i++) {
-		if (memcmp((void*)board[i], (void*)g.board[i], 8 * sizeof(char)) != 0)
-			return false;
+	for (int i = 0; i < 8; i++) {
+		/*if (memcmp((void*)board[i], (void*)g.board[i], 8 * sizeof(char)) != 0)
+			return false;*/
+		for (int j = 0; j < 8; j++) {
+			if (board[i][j] != g.board[i][j])
+				return false;
+		}
 	}
 	return true;
 }

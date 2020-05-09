@@ -1804,82 +1804,81 @@ int main()
 
 				int time1 = 1;//seconds
 				int time2 = 1;//seconds
-				for (int x = 0; x < 5; x++) {//each endgame
-					endgameNo = x;
-					for (int i = 5; i > 2; i--) {//time 1 params
+				for (int x = 0; x >= 0; x++) {//each endgame
+					endgameNo = x % 5;
+					for (int i = 1; i < 6; i++) {//time 1 params
 						time1 = i;
-						for (int j = 5; j > 2; j--) {//time 2 params
+						for (int j = 1; j < 6; j++) {//time 2 params
 							if (i == j)
 								continue;
-							for (int k = 0; k < 1; k++) {//repeat each game 10 times
-								cout << x << ":" << i << ":" << j << ":" << k << "\n";
-								time2 = j;
-								newEndGame(endgameNo);
-								delete algo;
-								algo = new Algorithms(current_game, allValidMoves, movePiece);
+							cout << x << ":" << i << ":" << j << "\n";
+							time2 = j;
+							newEndGame(endgameNo);
+							delete algo;
+							algo = new Algorithms(current_game, allValidMoves, movePiece);
 
-								//logging vars
-								//mcts 1
-								vector<int> mctsEval;
-								vector<int> mctsNodes;
-								vector<float> mctsTime;
-								float totalTime = 0;
-								int totalNodes = 0;
-								//mcts 2
-								vector<int> mctsEval2;
-								vector<int> mctsNodes2;
-								vector<float> mctsTime2;
-								float totalTime2 = 0;
-								int totalNodes2 = 0;
-								//algo vars
-								bool player1 = true;
+							//logging vars
+							//mcts 1
+							vector<int> mctsEval;
+							vector<int> mctsNodes;
+							vector<float> mctsTime;
+							float totalTime = 0;
+							int totalNodes = 0;
+							//mcts 2
+							vector<int> mctsEval2;
+							vector<int> mctsNodes2;
+							vector<float> mctsTime2;
+							float totalTime2 = 0;
+							int totalNodes2 = 0;
+							//algo vars
+							bool player1 = true;
 
-								//code here
-								player1 = true;
-								while (!current_game->isFinished()) {
-									if (player1)
-										algo->monteCarloTreeSearchTimed(time1);
-									else
-										algo->monteCarloTreeSearchTimed(time2);
-									algo->doBestMove();
-									/*printLogo();
-									printSituation(*current_game);
-									printBoard(*current_game);*/
-									if (player1 && algo != nullptr) {
-										mctsEval.push_back(current_game->evaluate());
-										mctsNodes.push_back(algo->nodesCreated);
-										mctsTime.push_back(algo->mctsActualTime);
-										totalTime += algo->mctsActualTime;
-										totalNodes += algo->nodesCreated;
-									}
-									else {
-										mctsEval2.push_back(current_game->evaluate());
-										mctsNodes2.push_back(algo->nodesCreated);
-										mctsTime2.push_back(algo->mctsActualTime);
-										totalTime2 += algo->mctsActualTime;
-										totalNodes2 += algo->nodesCreated;
-									}
-									player1 = !player1;
-
-									if (totalTime > 300 || totalTime2 > 300) {//caps games to 5 minutes
-										current_game->setStaleMate();
-										current_game->winner = 0;
-									}
-								}
-								//write data
-								record(endgameNo, false, true, time1, mctsEval, mctsNodes, mctsTime);
-								record(endgameNo, false, false, time2, mctsEval2, mctsNodes2, mctsTime2);
-								int win = 0, draw = 0, lose = 0;
-								if (current_game->winner != 0)
-									if (current_game->winner > 0)
-										win = 1;
-									else
-										lose = 1;
+							//code here
+							player1 = true;
+							while (!current_game->isFinished()) {
+								if (player1)
+									algo->monteCarloTreeSearchTimed(time1);
 								else
-									draw = 1;
-								mctsHistory(endgameNo, time1, true, "MCTS", time2, win, draw, lose, mctsEval.size(), totalNodes, totalTime, totalNodes2, totalTime2);
+									algo->monteCarloTreeSearchTimed(time2);
+								algo->doBestMove();
+								/*printLogo();
+								printSituation(*current_game);
+								printBoard(*current_game);*/
+								if (player1 && algo != nullptr) {
+									mctsEval.push_back(current_game->evaluate());
+									mctsNodes.push_back(algo->nodesCreated);
+									mctsTime.push_back(algo->mctsActualTime);
+									totalTime += algo->mctsActualTime;
+									totalNodes += algo->nodesCreated;
+								}
+								else {
+									mctsEval2.push_back(current_game->evaluate());
+									mctsNodes2.push_back(algo->nodesCreated);
+									mctsTime2.push_back(algo->mctsActualTime);
+									totalTime2 += algo->mctsActualTime;
+									totalNodes2 += algo->nodesCreated;
+								}
+								player1 = !player1;
 
+								if (totalTime > 300 || totalTime2 > 300) {//caps games to 5 minutes
+									current_game->setStaleMate();
+									current_game->winner = 0;
+								}
 							}
+							//write data
+							record(endgameNo, false, true, time1, mctsEval, mctsNodes, mctsTime);
+							record(endgameNo, false, false, time2, mctsEval2, mctsNodes2, mctsTime2);
+							int win = 0, draw = 0, lose = 0;
+							if (current_game->winner != 0)
+								if (current_game->winner > 0)
+									win = 1;
+								else
+									lose = 1;
+							else
+								draw = 1;
+							mctsHistory(endgameNo, time1, true, "MCTS", time2, win, draw, lose, mctsEval.size(), totalNodes, totalTime, totalNodes2, totalTime2);
+
+
 						}
 					}
 				}
