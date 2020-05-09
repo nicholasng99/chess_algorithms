@@ -183,8 +183,7 @@ public:
 			if (depth == 0)
 				return 0.0f;
 			//ucb1 formula
-			float winRate = white ? whiteWR() : blackWR();
-			return winRate + (float)sqrt(2) * (float)sqrt(log((float)parent->visitCount) / (float)visitCount);
+			return winRate(white) + ((float)sqrt(2) * (float)sqrt(log((float)parent->visitCount) / (float)visitCount));
 		}
 
 		// returns best UCT  node of all explored leaf nodes based on player, nullptr if no child

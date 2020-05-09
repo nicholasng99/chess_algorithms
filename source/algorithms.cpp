@@ -166,8 +166,6 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 			}
 		}
 	}
-	//the player that the algo optimizes for
-	bool white = MCTree->data.getCurrentTurn() == Chess::WHITE_PLAYER;
 	//for x times build the tree
 	auto start = std::chrono::high_resolution_clock::now();
 	while (true)
@@ -186,6 +184,8 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 		}
 		//if leaf has already explored all moves, pick the best result
 		while (!leaf->hasPossibleChildren() && leaf->children.size() > 0) {
+			//the player that the algo optimizes for
+			bool white = leaf->data.getCurrentTurn() == Chess::WHITE_PLAYER;
 			leaf = leaf->bestUCTChild(white);
 			*current_game = leaf->data;
 		}
@@ -201,7 +201,7 @@ bool Algorithms::monteCarloTreeSearch(int seconds)
 		}
 		//simulation - expand the child node randomly till finished
 		int result = -2;
-		bool playerIsWhite = leaf->data.getCurrentTurn() == 0 ? true : false;
+		bool playerIsWhite = leaf->data.getCurrentTurn() == 0;
 		while (result == -2) {
 			//end cases to stop simulation
 			if (current_game->isCheckMate()) {
